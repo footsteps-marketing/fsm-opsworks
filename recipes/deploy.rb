@@ -48,7 +48,7 @@ search("aws_opsworks_app").each do |app|
         git "#{deploy_root}" do
             revision app['app_source']['revision']
             repository app['app_source']['url']
-            owner deploy_user
+            user deploy_user
             group deploy_group
             if app['app_source']['ssh_key'] != 'null'
                 ssh_wrapper "ssh -i #{key_path}"
