@@ -28,7 +28,7 @@ search("aws_opsworks_app").each do |app|
     if app['app_source']['type'] == 'git'
         key_path = "/tmp/keys/#{app['shortname']}_rsa"
         
-        directory "#{key_path}" do
+        directory "/tmp/keys" do
             owner 'root'
             group 'root'
             mode '0700'
