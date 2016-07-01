@@ -7,17 +7,25 @@
 command = search('aws_opsworks_command').first
 
 search("aws_opsworks_app").each do |app|
+    
+    # Bail out if not deploying this app
     if app['deploy'] === false
         next
     end
+
+    # Set the deploy user
+    # @todo -- do this programmatically?
     deploy_user = 'www-data'
     deploy_group = 'www-data'
 
+    # Get a nice numeric string for the current version and set paths accordingly
     current_revision = command['sent_at'].delete("^0-9")
     deploy_root = "/srv/www/#{app['shortname']}/#{current_revision}"
     server_root = "/srv/www/#{app['shortname']}/current"
     Chef::Log.info("**************** Deploying #{app['shortname']} to #{deploy_root}")
 
+    
+    # Create the deploy directory
     directory "#{deploy_root}" do
         owner deploy_user
         group deploy_group
@@ -26,7 +34,13 @@ search("aws_opsworks_app").each do |app|
         action :create
     end
 
+    
+    # deploy the app from its source
+    # @todo handle non-git sources?
     if app['app_source']['type'] == 'git'
+
+        # Set up folders and key files
+        # as required for private key type deployments
         key_path = "/var/www/.ssh/#{app['shortname']}_rsa"
         wrapper_path = "/tmp/wrappers/#{app['shortname']}.sh"
         
@@ -46,6 +60,7 @@ search("aws_opsworks_app").each do |app|
             action :create
         end
 
+        # Set up keys if needed
         if app['app_source']['ssh_key'] != 'null'
             file "#{key_path}" do
                 owner deploy_user
@@ -61,6 +76,8 @@ search("aws_opsworks_app").each do |app|
             end
         end
 
+        
+        # deploy the app
         git "#{deploy_root}" do
             revision app['app_source']['revision']
             repository app['app_source']['url']
@@ -73,6 +90,8 @@ search("aws_opsworks_app").each do |app|
         end
     end
 
+    
+    # Write out nginx.conf stuff for domains
     app['domains'].each do |domain|
         template "/etc/nginx/sites-available/#{domain}.conf" do
             source "site.conf.erb"
