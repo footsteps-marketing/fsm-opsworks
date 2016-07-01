@@ -175,6 +175,38 @@ search("aws_opsworks_app").each do |app|
         )
     end
 
+
+    # Clean up any excluded plugins
+    exclude_plugins = node['wordpress']['exclude_plugins']
+    exclude_themes = node['wordpress']['exclude_themes']
+
+    exclude_plugins.each do |plugin|
+        Chef::Log.debug("Deleting #{deploy_root}/current/wp-content/plugins/#{plugin}")
+        directory "#{deploy_root}/current/wp-content/plugins/#{plugin}" do
+            recursive true
+            action :delete
+        end
+    end
+
+    exclude_themes.each do |theme|
+        Chef::Log.debug("#{deploy_root}/current/wp-content/themes/#{theme}")
+        directory "#{deploy_root}/current/wp-content/themes/#{theme}" do
+            recursive true
+            action :delete
+        end
+    end
+
+
+    # Make the minifier happy
+    directory "#{deploy_root}/current/wp-content/plugins/bwp-minify/cache" do
+        recursive true
+        owner deploy_user
+        group deploy_group
+        mode '0775'
+        action :create
+    end
+    
+
     # Link the new deployment up
     link "#{server_root}" do
         to deploy_root
