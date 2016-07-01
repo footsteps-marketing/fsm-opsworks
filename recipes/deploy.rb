@@ -11,9 +11,9 @@ search("aws_opsworks_app").each do |app|
         next
     end
 
-    deploy_root = "/srv/www/#{app['shortname']}"
-    Chef::Log.info("***** Deploying #{app['shortname']} at #{command['sent_at']} ")
-    current_revision = command['sent_at']
+    current_revision = command['sent_at'].delete("^0-9")
+    deploy_root = "/srv/www/#{app['shortname']}/#{current_revision}"
+    Chef::Log.info("***** Deploying #{app['shortname']} at #{command['sent_at']} to #{deploy_root}")
 
     # if app['app_source']['type'] == 'git'
     #     git "#{deploy_root}" do
