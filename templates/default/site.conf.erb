@@ -18,7 +18,7 @@ server {
     include snippets/wordfence.conf;
 <% end -%>
 
-<% if node['wordpress']['multisite']['enabled']==false -%>
+<% if node['wordpress']['multisite']['enabled'] == false -%>
     include snippets/wordpress-multisite.conf;
 <% else -%>
     location / {

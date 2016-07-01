@@ -93,6 +93,7 @@ search("aws_opsworks_app").each do |app|
     
     # Write out nginx.conf stuff for domains
     app['domains'].each do |domain|
+        Chef::Log.info("**************** Writing config for #{domain}")
         template "/etc/nginx/sites-available/#{domain}.conf" do
             source "site.conf.erb"
             mode 0644
