@@ -31,7 +31,7 @@ search("aws_opsworks_app").each do |app|
         directory "/tmp/keys" do
             owner 'root'
             group 'root'
-            mode '0700'
+            mode '0755'
             recursive true
             action :create
         end
@@ -40,14 +40,16 @@ search("aws_opsworks_app").each do |app|
             file "#{key_path}" do
                 owner "root"
                 group "root"
-                mode "0600"
+                mode "0644"
                 content "#{app['app_source']['ssh_key']}"
             end
         end
 
         git "#{deploy_root}" do
-            revision app['app_source']['revision'] 
-            repository app['app_source']['url'] 
+            revision app['app_source']['revision']
+            repository app['app_source']['url']
+            owner deploy_user
+            group deploy_group
             if app['app_source']['ssh_key'] != 'null'
                 ssh_wrapper "ssh -i #{key_path}"
             end
