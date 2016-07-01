@@ -116,4 +116,8 @@ search("aws_opsworks_app").each do |app|
     link "#{server_root}" do
         to deploy_root
     end
+
+    service "nginx" do
+        action :restart
+    end
 end
