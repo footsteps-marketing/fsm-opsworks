@@ -46,8 +46,8 @@ search("aws_opsworks_app").each do |app|
             file "#{key_path}.sh" do
                 owner "root"
                 group "root"
-                mode "0700"
-                content "#!/bin/sh\nexec /usr/bin/ssh -i #{key_path} \"$@\""
+                mode "0755"
+                content "#!/bin/sh\nwhoami\nexec /usr/bin/ssh -i #{key_path} \"$@\""
             end
         end
 
