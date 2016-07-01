@@ -46,7 +46,7 @@ define('FS_METHOD', 'direct');
  */
 <%= @keys %>
 
-<% if node['wordpress']['wp_config']['enable_W3TC']==true -%>
+<% if node['wordpress']['enable_W3TC']==true -%>
 /** 
  * Enable W3 Total Cache
  */
@@ -55,7 +55,7 @@ define('COOKIE_DOMAIN', '');
 <% end -%>
 
 
-<% if node['wordpress']['wp_config']['force_secure_logins']==true -%>
+<% if node['wordpress']['force_secure_logins']==true -%>
 /**
  * Secure Logins
  */
@@ -64,7 +64,7 @@ define('FORCE_SSL_ADMIN', true);
 <% end -%>
 
 
-<% if node['wordpress']['wp_config']['sunrise']==true -%>
+<% if node['wordpress']['sunrise']==true -%>
 /**
  * Sunrise
  */
@@ -72,7 +72,7 @@ define( 'SUNRISE', 'on' );
 <% end -%>
 
 
-<% if node['wordpress']['wp_config']['debug']==true -%>
+<% if node['wordpress']['debug']==true -%>
 /**
  * Sunrise
  */
@@ -80,7 +80,7 @@ define( 'WP_DEBUG', true );
 <% end -%>
 
 
-<% if node['wordpress']['wp_config']['site_url']!=false -%>
+<% if node['wordpress']['site_url']!=false -%>
 /**
  * Hardcode Site URL
  */
@@ -89,7 +89,7 @@ define('WP_SITEURL', '<%= node[:wordpress][:wp_config][:site_url]%>');
 <% end -%>
 
 
-<% if node['wordpress']['wp_config']['multisite']['enabled']==true && node['wordpress']['wp_config']['multisite']['domain']!=false -%>
+<% if node['wordpress']['multisite']['enabled']==true && node['wordpress']['multisite']['domain']!=false -%>
 define('WP_ALLOW_MULTISITE', true);
 define('MULTISITE', true);
 define('SUBDOMAIN_INSTALL', <%= node[:wordpress][:wp_config][:multisite][:subdomain_install] %>);
@@ -101,48 +101,48 @@ define('BLOG_ID_CURRENT_SITE', <%= node[:wordpress][:wp_config][:multisite][:def
 
 
 
-<% if node['wordpress']['wp_config']['fsm_google_public_api_key']!=false -%>
+<% if node['wordpress']['fsm_google_public_api_key']!=false -%>
 /**
  * FSM Google API Settings
  **/
-define('FSM_GOOGLE_PUBLIC_API_KEY', '<%= node['wordpress']['wp_config']['fsm_google_public_api_key'] %>');
+define('FSM_GOOGLE_PUBLIC_API_KEY', '<%= node['wordpress']['fsm_google_public_api_key'] %>');
 <% end -%>
 
 
 
-<% if node['wordpress']['wp_config']['fsm_circular_api_secret']!=false -%>
+<% if node['wordpress']['fsm_circular_api_secret']!=false -%>
 /**
  * FSM Circular API Secret
  **/
-define('FSM_CIRCULAR_API_SECRET', '<%= node['wordpress']['wp_config']['fsm_circular_api_secret'] %>');
+define('FSM_CIRCULAR_API_SECRET', '<%= node['wordpress']['fsm_circular_api_secret'] %>');
 <% end -%>
 
 
 
-<% if node['wordpress']['wp_config']['fsm_smtp_host']!=false -%>
+<% if node['wordpress']['fsm_smtp_host']!=false -%>
 /**
  * FSM SMTP Settings
  **/
-define('FSM_SMTP_HOST', '<%= node['wordpress']['wp_config']['fsm_smtp']['fsm_smtp_host'] %>');
-define('FSM_SMTP_PORT', <%= node['wordpress']['wp_config']['fsm_smtp']['fsm_smtp_port'] %>);
-define('FSM_SMTP_USER', '<%= node['wordpress']['wp_config']['fsm_smtp']['fsm_smtp_user'] %>');
-define('FSM_SMTP_PASS', '<%= node['wordpress']['wp_config']['fsm_smtp']['fsm_smtp_pass'] %>');
-define('FSM_SMTP_AUTH', <%= node['wordpress']['wp_config']['fsm_smtp']['fsm_smtp_auth'] %>);
-define('FSM_SMTP_SECU', '<%= node['wordpress']['wp_config']['fsm_smtp']['fsm_smtp_secu'] %>');
+define('FSM_SMTP_HOST', '<%= node['wordpress']['fsm_smtp']['fsm_smtp_host'] %>');
+define('FSM_SMTP_PORT', <%= node['wordpress']['fsm_smtp']['fsm_smtp_port'] %>);
+define('FSM_SMTP_USER', '<%= node['wordpress']['fsm_smtp']['fsm_smtp_user'] %>');
+define('FSM_SMTP_PASS', '<%= node['wordpress']['fsm_smtp']['fsm_smtp_pass'] %>');
+define('FSM_SMTP_AUTH', <%= node['wordpress']['fsm_smtp']['fsm_smtp_auth'] %>);
+define('FSM_SMTP_SECU', '<%= node['wordpress']['fsm_smtp']['fsm_smtp_secu'] %>');
 <% end -%>
 
 
 
-<% if node['wordpress']['wp_config']['wpmudev_limit_to_user']!=false -%>
+<% if node['wordpress']['wpmudev_limit_to_user']!=false -%>
 /**
  * WPMU Users
  **/
-define('WPMUDEV_LIMIT_TO_USER', '<%= node['wordpress']['wp_config']['wpmudev_limit_to_user'] %>');
+define('WPMUDEV_LIMIT_TO_USER', '<%= node['wordpress']['wpmudev_limit_to_user'] %>');
 <% end -%>
 
 
 
-<% if node['wordpress']['wp_config']['aws_access_key_id']!=false && node['wordpress']['wp_config']['aws_access_key_secret']!=false -%>
+<% if node['wordpress']['aws_access_key_id']!=false && node['wordpress']['aws_access_key_secret']!=false -%>
 /**
  * FSM AWS Access Key Settings
  **/

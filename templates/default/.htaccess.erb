@@ -50,7 +50,7 @@ Order Deny,Allow
 #Do not remove this line. Disable Web caching in Wordfence to remove this data - WFCACHECODE
 <% end -%>
 
-<% if node['wordpress']['wp_config']['multisite']['enabled']==false -%>
+<% if node['wordpress']['multisite']['enabled']==false -%>
 # BEGIN WordPress
 <IfModule mod_rewrite.c>
 RewriteEngine On
@@ -63,7 +63,7 @@ RewriteRule . /index.php [L]
 # END WordPress
 <% end -%>
 
-<% if node['wordpress']['wp_config']['multisite']['enabled']==true && node['wordpress']['wp_config']['multisite']['subdomain_install'] == false -%>
+<% if node['wordpress']['multisite']['enabled']==true && node['wordpress']['multisite']['subdomain_install'] == false -%>
 RewriteEngine On
 RewriteBase /
 RewriteRule ^index\.php$ - [L]
@@ -79,7 +79,7 @@ RewriteRule ^([_0-9a-zA-Z-]+/)?(.*\.php)$ $2 [L]
 RewriteRule . index.php [L]
 <% end -%>
 
-<% if node['wordpress']['wp_config']['multisite']['enabled']==true && node['wordpress']['wp_config']['multisite']['subdomain_install'] == true -%>
+<% if node['wordpress']['multisite']['enabled']==true && node['wordpress']['multisite']['subdomain_install'] == true -%>
 RewriteEngine On
 RewriteBase /
 RewriteRule ^index\.php$ - [L]
@@ -113,7 +113,7 @@ Order deny,allow
 Deny from all
 </FilesMatch>
 
-<% if node['wordpress']['wp_config']['debug']==true -%>
+<% if node['wordpress']['debug']==true -%>
 php_flag display_startup_errors on
 php_flag display_errors on
 php_flag html_errors on
