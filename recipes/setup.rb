@@ -23,3 +23,10 @@ end
 package "Install letsencrypt" do
     package_name "letsencrypt"
 end
+
+# Handle a bug with kswapd0 eating lots of CPU
+# See http://askubuntu.com/a/764134
+cron "fix_kswapd0" do
+    user 'root'
+    command "echo 1 > /proc/sys/vm/drop_cache"
+end
