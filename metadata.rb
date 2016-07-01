@@ -1,0 +1,7 @@
+name 'fsm-opsworks'
+maintainer 'Aaron Hipple'
+maintainer_email 'aaron@footstepsmarketing.com'
+license 'all_rights'
+description 'Installs/Configures fsm-opsworks'
+long_description 'Installs/Configures fsm-opsworks'
+version '0.1.0'
