@@ -27,11 +27,20 @@ search("aws_opsworks_app").each do |app|
 
     if app['app_source']['type'] == 'git'
         key_path = "/tmp/keys/#{app['shortname']}_rsa"
+        wrapper_path = "/tmp/wrappers/#{app['shortname']}.sh"
         
         directory "/tmp/keys" do
             owner 'root'
             group 'root'
             mode '0700'
+            recursive true
+            action :create
+        end
+
+        directory "/tmp/wrappers" do
+            owner 'root'
+            group 'root'
+            mode '0755'
             recursive true
             action :create
         end
@@ -43,7 +52,7 @@ search("aws_opsworks_app").each do |app|
                 mode "0600"
                 content "#{app['app_source']['ssh_key']}"
             end
-            file "#{key_path}.sh" do
+            file "#{wrapper_path}" do
                 owner "root"
                 group "root"
                 mode "0755"
@@ -57,7 +66,7 @@ search("aws_opsworks_app").each do |app|
             user deploy_user
             group deploy_group
             if app['app_source']['ssh_key'] != 'null'
-                ssh_wrapper "#{key_path}.sh"
+                ssh_wrapper "#{wrapper_path}"
             end
             action :sync
         end
