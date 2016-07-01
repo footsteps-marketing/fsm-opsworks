@@ -21,7 +21,7 @@ location ~ ^/[_0-9a-zA-Z-]+/files/(.*)$ {
 #avoid php readfile()
 location ^~ /blogs.dir {
     internal;
-    alias /srv/www/<%= @app['shortname'] %>/wp-content/blogs.dir ;
+    alias /srv/www/<%= @app['shortname'] %>/current/wp-content/blogs.dir ;
     access_log off; log_not_found off;      expires max;
 }
 
