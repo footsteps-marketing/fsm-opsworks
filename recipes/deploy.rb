@@ -73,23 +73,27 @@ search("aws_opsworks_app").each do |app|
         end
     end
 
+=begin
+    @todo Write out an nginx server config for each domain on the app
+    @todo Figure out data sources for the database and wp-config code below:
+
+    template "#{deploy_root}/wp-config.php" do
+        source "wp-config.php.erb"
+        mode 0660
+        owner deploy_owner
+        group deploy_group
+        
+        variables(
+            :database   => (deploy[:database][:database] rescue nil),
+            :user       => (deploy[:database][:username] rescue nil),
+            :password   => (deploy[:database][:password] rescue nil),
+            :host       => (deploy[:database][:host] rescue nil),
+            :keys       => (keys rescue nil)
+        )
+    end
+=end
     
-    # template "#{deploy_root}/wp-config.php" do
-    #     source "wp-config.php.erb"
-    #     mode 0660
-    #     owner deploy_owner
-    #     group deploy_group
-    #     
-    #     variables(
-    #         :database   => (deploy[:database][:database] rescue nil),
-    #         :user       => (deploy[:database][:username] rescue nil),
-    #         :password   => (deploy[:database][:password] rescue nil),
-    #         :host       => (deploy[:database][:host] rescue nil),
-    #         :keys       => (keys rescue nil)
-    #     )
-    # end
-    
-    
+
     link "#{server_root}" do
         to deploy_root
     end
