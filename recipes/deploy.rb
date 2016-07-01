@@ -143,8 +143,8 @@ search("aws_opsworks_app").each do |app|
     db_password = nil
     db_host = nil
     search("aws_opsworks_rds_db_instance").each do |db|
-        Chef::log.info("******** Checking database #{db['rds_db_instance_arn']}")
-        Chef::log.info("********  against database #{app['data_sources']['arn']}")
+        Chef::Log.info("******** Checking database #{db['rds_db_instance_arn']}")
+        Chef::Log.info("********  against database #{app['data_sources']['arn']}")
 
         if db['rds_db_instance_arn'].to_s == app['data_sources']['arn'].to_s
             db_user = db[:db_user]
