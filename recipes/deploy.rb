@@ -81,8 +81,8 @@ search("aws_opsworks_app").each do |app|
             group "root"
 
             variables(
-                (:app => app rescue nil),
-                (:url => domain rescue nil)
+                :app => (app rescue nil),
+                :url => (domain rescue nil)
             )
         end
 
