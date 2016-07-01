@@ -124,8 +124,13 @@ search("aws_opsworks_app").each do |app|
         end
     end
 
-    Chef::Log.info("*********** DATA SOURCES HERE ************")
-    Chef::Log.info(YAML::dump(app['data_sources']))
+    Chef::Log.info("***********               ************")
+    Chef::Log.info("*********** APP DATA DUMP ************")
+    Chef::Log.info("***********               ************")
+    Chef::Log.info(YAML::dump(app))
+    Chef::Log.info("***********               ************")
+    Chef::Log.info("***********               ************")
+    Chef::Log.info("***********               ************")
 
 =begin
     @todo Figure out data sources for the database and wp-config code below:
@@ -137,7 +142,7 @@ search("aws_opsworks_app").each do |app|
         group deploy_group
         
         variables(
-            :database   => (deploy[:database][:database] rescue nil),
+            :database   => (app['data_sources']['staging_wp_env'] rescue nil),
             :user       => (deploy[:database][:username] rescue nil),
             :password   => (deploy[:database][:password] rescue nil),
             :host       => (deploy[:database][:host] rescue nil),
