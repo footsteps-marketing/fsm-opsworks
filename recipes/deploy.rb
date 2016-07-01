@@ -30,16 +30,16 @@ search("aws_opsworks_app").each do |app|
         wrapper_path = "/tmp/wrappers/#{app['shortname']}.sh"
         
         directory "/tmp/keys" do
-            owner 'root'
-            group 'root'
+            owner deploy_user
+            group deploy_group
             mode '0700'
             recursive true
             action :create
         end
 
         directory "/tmp/wrappers" do
-            owner 'root'
-            group 'root'
+            owner deploy_user
+            group deploy_group
             mode '0755'
             recursive true
             action :create
@@ -47,16 +47,16 @@ search("aws_opsworks_app").each do |app|
 
         if app['app_source']['ssh_key'] != 'null'
             file "#{key_path}" do
-                owner "root"
-                group "root"
+                owner deploy_user
+                group deploy_group
                 mode "0600"
                 content "#{app['app_source']['ssh_key']}"
             end
             file "#{wrapper_path}" do
-                owner "root"
-                group "root"
+                owner deploy_user
+                group deploy_group
                 mode "0755"
-                content "#!/bin/sh\nwhoami\nexec /usr/bin/ssh -i #{key_path} \"$@\""
+                content "#!/bin/sh\nexec /usr/bin/ssh -i #{key_path} \"$@\""
             end
         end
 
