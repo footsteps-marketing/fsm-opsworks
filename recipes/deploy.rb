@@ -124,10 +124,20 @@ search("aws_opsworks_app").each do |app|
         end
     end
 
+    database = search("aws_opsworks_rds_db_instance").first
+
     Chef::Log.info("***********               ************")
     Chef::Log.info("*********** APP DATA DUMP ************")
     Chef::Log.info("***********               ************")
     Chef::Log.info(YAML::dump(app))
+    Chef::Log.info("***********               ************")
+    Chef::Log.info("***********               ************")
+    Chef::Log.info("***********               ************")
+
+    Chef::Log.info("***********               ************")
+    Chef::Log.info("******** DATABASE DATA DUMP **********")
+    Chef::Log.info("***********               ************")
+    Chef::Log.info(YAML::dump(database))
     Chef::Log.info("***********               ************")
     Chef::Log.info("***********               ************")
     Chef::Log.info("***********               ************")
