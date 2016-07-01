@@ -46,15 +46,6 @@ define('FS_METHOD', 'direct');
  */
 <%= @keys %>
 
-<% if node['wordpress']['enable_W3TC']==true -%>
-/** 
- * Enable W3 Total Cache
- */
-define('WP_CACHE', true); // Added by W3 Total Cache
-define('COOKIE_DOMAIN', '');
-<% end -%>
-
-
 <% if node['wordpress']['force_secure_logins']==true -%>
 /**
  * Secure Logins

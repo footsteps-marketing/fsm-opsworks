@@ -4,8 +4,11 @@
 #
 # Copyright (c) 2016 FootSteps Marketing, All Rights Reserved.
 
-command = search('aws_opsworks_command').first
+require 'uri'
+require 'net/http'
+require 'net/https'
 
+command = search('aws_opsworks_command').first
 search("aws_opsworks_app").each do |app|
     
     # Bail out if not deploying this app
@@ -124,43 +127,36 @@ search("aws_opsworks_app").each do |app|
         end
     end
 
-    database = search("aws_opsworks_rds_db_instance").first
-
-    Chef::Log.info("***********               ************")
-    Chef::Log.info("*********** APP DATA DUMP ************")
-    Chef::Log.info("***********               ************")
-    Chef::Log.info(YAML::dump(app))
-    Chef::Log.info("***********               ************")
-    Chef::Log.info("***********               ************")
-    Chef::Log.info("***********               ************")
-
-    Chef::Log.info("***********               ************")
-    Chef::Log.info("******** DATABASE DATA DUMP **********")
-    Chef::Log.info("***********               ************")
-    Chef::Log.info(YAML::dump(database))
-    Chef::Log.info("***********               ************")
-    Chef::Log.info("***********               ************")
-    Chef::Log.info("***********               ************")
-
-=begin
-    @todo Figure out data sources for the database and wp-config code below:
-
-    template "#{deploy_root}/wp-config.php" do
-        source "wp-config.php.erb"
-        mode 0660
-        owner deploy_owner
-        group deploy_group
-        
-        variables(
-            :database   => (app['data_sources']['staging_wp_env'] rescue nil),
-            :user       => (deploy[:database][:username] rescue nil),
-            :password   => (deploy[:database][:password] rescue nil),
-            :host       => (deploy[:database][:host] rescue nil),
-            :keys       => (keys rescue nil)
-        )
+    if node['wordpress']['salt'] == false then
+        uri = URI.parse("https://api.wordpress.org/secret-key/1.1/salt/")
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        request = Net::HTTP::Get.new(uri.request_uri)
+        response = http.request(request)
+        keys = response.body
+    else
+        keys = node['wordpress']['wp_config']['salt']
     end
-=end
-    
+
+    search("aws_opsworks_rds_db_instance").each do |db|
+        if db['rds_db_instance_arn'] == app['data_sources']['arn']
+            template "#{deploy_root}/wp-config.php" do
+                source "wp-config.php.erb"
+                mode 0660
+                owner deploy_owner
+                group deploy_group
+                
+                variables(
+                    :database   => (app['data_sources']['staging_wp_env'] rescue nil),
+                    :user       => (db[:db_user] rescue nil),
+                    :password   => (db[:db_password] rescue nil),
+                    :host       => (db[:address] rescue nil),
+                    :keys       => (keys rescue nil)
+                )
+            end
+        end
+    end
 
     link "#{server_root}" do
         to deploy_root
