@@ -73,6 +73,21 @@ search("aws_opsworks_app").each do |app|
         end
     end
 
+    app['domains'].each do |domain|
+        template "/etc/nginx/sites-available/#{domain}.conf" do
+            source "site.conf.erb"
+            mode 0644
+            owner "root"
+            group "root"
+
+            variables(
+                (:app => app rescue nil),
+                (:url => domain rescue nil)
+            )
+        end
+    end
+
+
 =begin
     @todo Write out an nginx server config for each domain on the app
     @todo Figure out data sources for the database and wp-config code below:
