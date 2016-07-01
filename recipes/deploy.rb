@@ -56,7 +56,7 @@ search("aws_opsworks_app").each do |app|
                 owner deploy_user
                 group deploy_group
                 mode "0755"
-                content "#!/bin/sh\nexec /usr/bin/ssh -i -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no #{key_path} \"$@\""
+                content "#!/bin/sh\nexec /usr/bin/ssh -i -o StrictHostKeyChecking=no #{key_path} \"$@\""
             end
         end
 
