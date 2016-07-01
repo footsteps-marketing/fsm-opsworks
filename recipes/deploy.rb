@@ -136,7 +136,7 @@ search("aws_opsworks_app").each do |app|
         response = http.request(request)
         keys = response.body
     else
-        keys = node['wordpress']['wp_config']['salt']
+        keys = node['wordpress']['salt']
     end
 
     search("aws_opsworks_rds_db_instance").each do |db|
