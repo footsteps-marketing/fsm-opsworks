@@ -15,6 +15,7 @@ search("aws_opsworks_app").each do |app|
 
     current_revision = command['sent_at'].delete("^0-9")
     deploy_root = "/srv/www/#{app['shortname']}/#{current_revision}"
+    server_root = "/srv/www/#{app['shortname']}/current"
     Chef::Log.info("**************** Deploying #{app['shortname']} to #{deploy_root}")
 
     directory "#{deploy_root}" do
@@ -71,6 +72,7 @@ search("aws_opsworks_app").each do |app|
             action :sync
         end
     end
+
     
     # template "#{deploy_root}/wp-config.php" do
     #     source "wp-config.php.erb"
@@ -86,4 +88,9 @@ search("aws_opsworks_app").each do |app|
     #         :keys       => (keys rescue nil)
     #     )
     # end
+    
+    
+    link "#{server_root}" do
+        to deploy_root
+    end
 end
