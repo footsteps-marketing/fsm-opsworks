@@ -167,7 +167,7 @@ search("aws_opsworks_app").each do |app|
         group deploy_group
         
         variables(
-            :database   => (app['data_sources']['database_name'] rescue nil),
+            :database   => (app['data_sources'].first['database_name'] rescue nil),
             :user       => (db_user rescue nil),
             :password   => (db_password rescue nil),
             :host       => (db_host rescue nil),
