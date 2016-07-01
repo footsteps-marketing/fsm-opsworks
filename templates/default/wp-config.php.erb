@@ -1,0 +1,189 @@
+<?php
+/** 
+ * The base configurations of the WordPress.
+ *
+ * This file has the following configurations: MySQL settings, Table Prefix,
+ * Secret Keys, WordPress Language, and ABSPATH. You can find more information by
+ * visiting {@link http://codex.wordpress.org/Editing_wp-config.php Editing
+ * wp-config.php} Codex page. You can get the MySQL settings from your web host.
+ *
+ * This file is used by the wp-config.php creation script during the
+ * installation. You don't have to use the web site, you can just copy this file
+ * to "wp-config.php" and fill in the values.
+ *
+ * @package WordPress
+ */
+
+// ** MySQL settings - You can get this info from your web host ** //
+/** The name of the database for WordPress */
+define('DB_NAME', '<%= @database %>');
+
+/** MySQL database username */
+define('DB_USER', '<%= @user %>');
+
+/** MySQL database password */
+define('DB_PASSWORD', '<%= @password %>');
+
+/** MySQL hostname */
+define('DB_HOST', '<%= @host %>');
+
+/** Database Charset to use in creating database tables. */
+define('DB_CHARSET', 'utf8');
+
+/** The Database Collate type. Don't change this if in doubt. */
+define('DB_COLLATE', '');
+
+define('FS_METHOD', 'direct');
+
+/**
+ * Authentication Unique Keys.
+ *
+ * Change these to different unique phrases!
+ * You can generate these using the {@link https://api.wordpress.org/secret-key/1.1/ WordPress.org secret-key service}
+ * You can change these at any point in time to invalidate all existing cookies. This will force all users to have to log in again.
+ *
+ * @since 2.6.0
+ */
+<%= @keys %>
+
+<% if node['wordpress']['wp_config']['enable_W3TC']==true -%>
+/** 
+ * Enable W3 Total Cache
+ */
+define('WP_CACHE', true); // Added by W3 Total Cache
+define('COOKIE_DOMAIN', '');
+<% end -%>
+
+
+<% if node['wordpress']['wp_config']['force_secure_logins']==true -%>
+/**
+ * Secure Logins
+ */
+define('FORCE_SSL_LOGIN', true);
+define('FORCE_SSL_ADMIN', true);
+<% end -%>
+
+
+<% if node['wordpress']['wp_config']['sunrise']==true -%>
+/**
+ * Sunrise
+ */
+define( 'SUNRISE', 'on' );
+<% end -%>
+
+
+<% if node['wordpress']['wp_config']['debug']==true -%>
+/**
+ * Sunrise
+ */
+define( 'WP_DEBUG', true );
+<% end -%>
+
+
+<% if node['wordpress']['wp_config']['site_url']!=false -%>
+/**
+ * Hardcode Site URL
+ */
+define('WP_HOME',    '<%= node[:wordpress][:wp_config][:site_url]%>');
+define('WP_SITEURL', '<%= node[:wordpress][:wp_config][:site_url]%>');
+<% end -%>
+
+
+<% if node['wordpress']['wp_config']['multisite']['enabled']==true && node['wordpress']['wp_config']['multisite']['domain']!=false -%>
+define('WP_ALLOW_MULTISITE', true);
+define('MULTISITE', true);
+define('SUBDOMAIN_INSTALL', <%= node[:wordpress][:wp_config][:multisite][:subdomain_install] %>);
+define('DOMAIN_CURRENT_SITE', '<%= node[:wordpress][:wp_config][:multisite][:domain_current_site] %>');
+define('PATH_CURRENT_SITE', '/');
+define('SITE_ID_CURRENT_SITE', <%= node[:wordpress][:wp_config][:multisite][:default_site] %>);
+define('BLOG_ID_CURRENT_SITE', <%= node[:wordpress][:wp_config][:multisite][:default_site] %>);
+<% end -%>
+
+
+
+<% if node['wordpress']['wp_config']['fsm_google_public_api_key']!=false -%>
+/**
+ * FSM Google API Settings
+ **/
+define('FSM_GOOGLE_PUBLIC_API_KEY', '<%= node['wordpress']['wp_config']['fsm_google_public_api_key'] %>');
+<% end -%>
+
+
+
+<% if node['wordpress']['wp_config']['fsm_circular_api_secret']!=false -%>
+/**
+ * FSM Circular API Secret
+ **/
+define('FSM_CIRCULAR_API_SECRET', '<%= node['wordpress']['wp_config']['fsm_circular_api_secret'] %>');
+<% end -%>
+
+
+
+<% if node['wordpress']['wp_config']['fsm_smtp_host']!=false -%>
+/**
+ * FSM SMTP Settings
+ **/
+define('FSM_SMTP_HOST', '<%= node['wordpress']['wp_config']['fsm_smtp']['fsm_smtp_host'] %>');
+define('FSM_SMTP_PORT', <%= node['wordpress']['wp_config']['fsm_smtp']['fsm_smtp_port'] %>);
+define('FSM_SMTP_USER', '<%= node['wordpress']['wp_config']['fsm_smtp']['fsm_smtp_user'] %>');
+define('FSM_SMTP_PASS', '<%= node['wordpress']['wp_config']['fsm_smtp']['fsm_smtp_pass'] %>');
+define('FSM_SMTP_AUTH', <%= node['wordpress']['wp_config']['fsm_smtp']['fsm_smtp_auth'] %>);
+define('FSM_SMTP_SECU', '<%= node['wordpress']['wp_config']['fsm_smtp']['fsm_smtp_secu'] %>');
+<% end -%>
+
+
+
+<% if node['wordpress']['wp_config']['wpmudev_limit_to_user']!=false -%>
+/**
+ * WPMU Users
+ **/
+define('WPMUDEV_LIMIT_TO_USER', '<%= node['wordpress']['wp_config']['wpmudev_limit_to_user'] %>');
+<% end -%>
+
+
+
+<% if node['wordpress']['wp_config']['aws_access_key_id']!=false && node['wordpress']['wp_config']['aws_access_key_secret']!=false -%>
+/**
+ * FSM AWS Access Key Settings
+ **/
+define('FSM_AWS_ACCESS_KEY_ID', '<%= node[:wordpress][:wp_config][:aws_access_key_id] %>');
+define('FSM_AWS_SECRET_KEY', '<%= node[:wordpress][:wp_config][:aws_access_key_secret] %>');
+define('AWS_ACCESS_KEY_ID', '<%= node[:wordpress][:wp_config][:aws_access_key_id] %>');
+define('AWS_SECRET_ACCESS_KEY', '<%= node[:wordpress][:wp_config][:aws_access_key_secret] %>');
+<% end -%>
+
+
+
+/**
+ * Use external cron
+ */
+//define('DISABLE_WP_CRON', true);
+
+
+
+/**
+ * WordPress Database Table prefix.
+ *
+ * You can have multiple installations in one database if you give each a unique
+ * prefix. Only numbers, letters, and underscores please!
+ */
+$table_prefix  = 'wp_';
+
+/**
+ * WordPress Localized Language, defaults to English.
+ *
+ * Change this to localize WordPress.  A corresponding MO file for the chosen
+ * language must be installed to wp-content/languages. For example, install
+ * de.mo to wp-content/languages and set WPLANG to 'de' to enable German
+ * language support.
+ */
+define ('WPLANG', '');
+
+/* That's all, stop editing! Happy blogging. */
+
+/** WordPress absolute path to the Wordpress directory. */
+if ( !defined('ABSPATH') )
+        define('ABSPATH', dirname(__FILE__) . '/');
+
+/** Sets up WordPress vars and included files. */
+require_once(ABSPATH . 'wp-settings.php');

@@ -19,3 +19,7 @@ end
 package "Install php-mcrypt" do
     package_name "php-mcrypt"
 end
+
+package "Install letsencrypt" do
+    package_name "letsencrypt"
+end

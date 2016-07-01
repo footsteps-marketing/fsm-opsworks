@@ -1,0 +1,40 @@
+server {
+<% if defined?(@url) -%>
+    listen 80;
+    server_name <%= @url %>;
+    access_log logs/<%= @url %>.access.log main;
+    error_log logs/<%= @url %>.error.log warn;
+<% else -%>
+    listen 80 default_server;
+    access_log logs/<%= @app['shortname'] %>.access.log main;
+    error_log logs/<%= @app['shortname'] %>.error.log warn;
+<% end -%>
+
+    root /srv/www/<%= @app['shortname'] %>/current;
+
+    index index.php;
+    
+<% if node['wordpress']['wordfence']==true -%>
+    include snippets/wordfence.conf;
+<% end -%>
+
+<% if node['wordpress']['wp_config']['multisite']['enabled']==false -%>
+    include snippets/wordpress-multisite.conf;
+<% else -%>
+    location / {
+        try_files $uri $uri/ /index.php?$args ;
+    }
+    
+    location ~ .php$ {
+        try_files $uri /index.php;
+        include fastcgi_params;
+        include snippets/fastcgi-php.conf;
+        fastcgi_param PATH_TRANSLATED $document_root$fastcgi_script_name;
+        fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+    }
+<% end -%>
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
