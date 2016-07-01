@@ -75,19 +75,19 @@ define( 'WP_DEBUG', true );
 /**
  * Hardcode Site URL
  */
-define('WP_HOME',    '<%= node[:wordpress][:wp_config][:site_url]%>');
-define('WP_SITEURL', '<%= node[:wordpress][:wp_config][:site_url]%>');
+define('WP_HOME',    '<%= node[:wordpress][:site_url]%>');
+define('WP_SITEURL', '<%= node[:wordpress][:site_url]%>');
 <% end -%>
 
 
 <% if node['wordpress']['multisite']['enabled']==true && node['wordpress']['multisite']['domain']!=false -%>
 define('WP_ALLOW_MULTISITE', true);
 define('MULTISITE', true);
-define('SUBDOMAIN_INSTALL', <%= node[:wordpress][:wp_config][:multisite][:subdomain_install] %>);
-define('DOMAIN_CURRENT_SITE', '<%= node[:wordpress][:wp_config][:multisite][:domain_current_site] %>');
+define('SUBDOMAIN_INSTALL', <%= node[:wordpress][:multisite][:subdomain_install] %>);
+define('DOMAIN_CURRENT_SITE', '<%= node[:wordpress][:multisite][:domain_current_site] %>');
 define('PATH_CURRENT_SITE', '/');
-define('SITE_ID_CURRENT_SITE', <%= node[:wordpress][:wp_config][:multisite][:default_site] %>);
-define('BLOG_ID_CURRENT_SITE', <%= node[:wordpress][:wp_config][:multisite][:default_site] %>);
+define('SITE_ID_CURRENT_SITE', <%= node[:wordpress][:multisite][:default_site] %>);
+define('BLOG_ID_CURRENT_SITE', <%= node[:wordpress][:multisite][:default_site] %>);
 <% end -%>
 
 
@@ -137,10 +137,10 @@ define('WPMUDEV_LIMIT_TO_USER', '<%= node['wordpress']['wpmudev_limit_to_user'] 
 /**
  * FSM AWS Access Key Settings
  **/
-define('FSM_AWS_ACCESS_KEY_ID', '<%= node[:wordpress][:wp_config][:aws_access_key_id] %>');
-define('FSM_AWS_SECRET_KEY', '<%= node[:wordpress][:wp_config][:aws_access_key_secret] %>');
-define('AWS_ACCESS_KEY_ID', '<%= node[:wordpress][:wp_config][:aws_access_key_id] %>');
-define('AWS_SECRET_ACCESS_KEY', '<%= node[:wordpress][:wp_config][:aws_access_key_secret] %>');
+define('FSM_AWS_ACCESS_KEY_ID', '<%= node[:wordpress][:aws_access_key_id] %>');
+define('FSM_AWS_SECRET_KEY', '<%= node[:wordpress][:aws_access_key_secret] %>');
+define('AWS_ACCESS_KEY_ID', '<%= node[:wordpress][:aws_access_key_id] %>');
+define('AWS_SECRET_ACCESS_KEY', '<%= node[:wordpress][:aws_access_key_secret] %>');
 <% end -%>
 
 

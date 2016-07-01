@@ -126,6 +126,8 @@ search("aws_opsworks_app").each do |app|
         end
     end
 
+
+    # Get or generate salts
     if node['wordpress']['salt'] == false then
         uri = URI.parse("https://api.wordpress.org/secret-key/1.1/salt/")
         http = Net::HTTP.new(uri.host, uri.port)
@@ -138,6 +140,9 @@ search("aws_opsworks_app").each do |app|
         keys = node['wordpress']['salt']
     end
 
+
+
+    # Get database info
     db_user = nil
     db_password = nil
     db_host = nil
@@ -154,6 +159,7 @@ search("aws_opsworks_app").each do |app|
         end
     end
 
+    # Write out wp-config.php
     template "#{deploy_root}/wp-config.php" do
         source "wp-config.php.erb"
         mode 0660
@@ -169,10 +175,12 @@ search("aws_opsworks_app").each do |app|
         )
     end
 
+    # Link the new deployment up
     link "#{server_root}" do
         to deploy_root
     end
 
+    # Restart nginx for good measure
     service "nginx" do
         action :restart
     end

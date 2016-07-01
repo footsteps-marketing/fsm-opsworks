@@ -1,5 +1,5 @@
 <?php 
-$_SERVER['HTTP_HOST'] = '<%= node[:wordpress][:wp_config][:multisite][:domain_current_site] %>';
+$_SERVER['HTTP_HOST'] = '<%= node[:wordpress][:multisite][:domain_current_site] %>';
 
 if ( !isset($wp_did_header) ) {
 
