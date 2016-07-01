@@ -157,7 +157,7 @@ search("aws_opsworks_app").each do |app|
     template "#{deploy_root}/wp-config.php" do
         source "wp-config.php.erb"
         mode 0660
-        owner deploy_owner
+        owner deploy_user
         group deploy_group
         
         variables(
