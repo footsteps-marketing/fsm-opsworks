@@ -26,10 +26,10 @@ search("aws_opsworks_app").each do |app|
     end
 
     if app['app_source']['type'] == 'git'
-        key_path = "/tmp/keys/#{app['shortname']}_rsa"
+        key_path = "/var/www/.ssh/#{app['shortname']}_rsa"
         wrapper_path = "/tmp/wrappers/#{app['shortname']}.sh"
         
-        directory "/tmp/keys" do
+        directory "/var/www/.ssh" do
             owner deploy_user
             group deploy_group
             mode '0700'
