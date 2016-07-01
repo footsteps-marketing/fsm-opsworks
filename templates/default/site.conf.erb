@@ -14,11 +14,11 @@ server {
 
     index index.php;
     
-<% if node['wordpress']['wordfence']==true -%>
+<% if node['wordpress']['wordfence'] == true -%>
     include snippets/wordfence.conf;
 <% end -%>
 
-<% if node['wordpress']['multisite']['enabled'] == false -%>
+<% if node['wordpress']['multisite']['enabled'] == true -%>
     include snippets/wordpress-multisite.conf;
 <% else -%>
     location / {

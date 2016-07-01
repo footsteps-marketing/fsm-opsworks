@@ -13,11 +13,6 @@ location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
     log_not_found off;
 }
 
-location ~ ^/[_0-9a-zA-Z-]+/files/(.*)$ {
-    try_files /wp-content/blogs.dir/$blogid/files/$2 /wp-includes/ms-files.php?file=$2 ;
-    access_log off; log_not_found off; expires max;
-}
-
 #avoid php readfile()
 location ^~ /blogs.dir {
     internal;
@@ -43,7 +38,6 @@ location ~ \.php$ {
     #NOTE: You should have "cgi.fix_pathinfo = 0;" in php.ini
 
     include fastcgi_params;
-    fastcgi_index index.php;
     fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
     fastcgi_param PATH_TRANSLATED $document_root$fastcgi_script_name;
     fastcgi_pass unix:/run/php/php7.0-fpm.sock;

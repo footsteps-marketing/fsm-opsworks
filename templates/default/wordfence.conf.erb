@@ -42,9 +42,9 @@ if ($http_accept_encoding ~ gzip) {
 
 set $wordfenceHTTPS "";
 if ($scheme = 'https') {
-    If you want to ENABLE HTTPS caching, comment out the next line.
+    # If you want to ENABLE HTTPS caching, comment out the next line.
     set $wordfenceCacheOn 0; #Comment this line out to enable HTTPS caching.
-    set $wordfenceHTTPS '_https'; #Uncomment this line to enable HTTPS caching.
+    # set $wordfenceHTTPS '_https'; #Uncomment this line to enable HTTPS caching.
 }
 
 #The main purpose of this line is to capture the URL components into variables.
