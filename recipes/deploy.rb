@@ -139,23 +139,30 @@ search("aws_opsworks_app").each do |app|
         keys = node['wordpress']['salt']
     end
 
+    db_user = nil
+    db_password = nil
+    db_host = nil
     search("aws_opsworks_rds_db_instance").each do |db|
-        if db['rds_db_instance_arn'] == app['data_sources']['arn']
-            template "#{deploy_root}/wp-config.php" do
-                source "wp-config.php.erb"
-                mode 0660
-                owner deploy_owner
-                group deploy_group
-                
-                variables(
-                    :database   => (app['data_sources']['staging_wp_env'] rescue nil),
-                    :user       => (db[:db_user] rescue nil),
-                    :password   => (db[:db_password] rescue nil),
-                    :host       => (db[:address] rescue nil),
-                    :keys       => (keys rescue nil)
-                )
-            end
+        if db['rds_db_instance_arn'].to_s == app['data_sources']['arn'].to_s
+            db_user = db[:db_user]
+            db_password = db[:db_password]
+            db_host = db[:address]
         end
+    end
+
+    template "#{deploy_root}/wp-config.php" do
+        source "wp-config.php.erb"
+        mode 0660
+        owner deploy_owner
+        group deploy_group
+        
+        variables(
+            :database   => (app['data_sources']['database_name'] rescue nil),
+            :user       => (db_user rescue nil),
+            :password   => (db_password rescue nil),
+            :host       => (db_host rescue nil),
+            :keys       => (keys rescue nil)
+        )
     end
 
     link "#{server_root}" do
