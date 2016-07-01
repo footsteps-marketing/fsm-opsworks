@@ -85,6 +85,10 @@ search("aws_opsworks_app").each do |app|
                 (:url => domain rescue nil)
             )
         end
+
+        link "/etc/nginx/sites-enabled/#{domain}.conf" do
+            to "/etc/nginx/sites-available/#{domain}.conf"
+        end
     end
 
 
