@@ -10,13 +10,31 @@ search("aws_opsworks_app").each do |app|
     if app['deploy'] === false
         next
     end
+    deploy_user = 'www-data'
+    deploy_group = 'www-data'
 
     current_revision = command['sent_at'].delete("^0-9")
     deploy_root = "/srv/www/#{app['shortname']}/#{current_revision}"
     Chef::Log.info("**************** Deploying #{app['shortname']} to #{deploy_root}")
 
+    directory "#{deploy_root}" do
+        owner deploy_user
+        group deploy_group
+        mode '0775'
+        recursive true
+        action :create
+    end
+
     if app['app_source']['type'] == 'git'
-        key_path = "/var/keys/#{app['shortname']}_rsa"
+        key_path = "/tmp/keys/#{app['shortname']}_rsa"
+        
+        directory "#{key_path}" do
+            owner 'root'
+            group 'root'
+            mode '0700'
+            recursive true
+            action :create
+        end
 
         if app['app_source']['ssh_key'] != 'null'
             file "#{key_path}" do
@@ -40,8 +58,8 @@ search("aws_opsworks_app").each do |app|
     # template "#{deploy_root}/wp-config.php" do
     #     source "wp-config.php.erb"
     #     mode 0660
-    #     group 'www-data'
-    #     owner "www-data"
+    #     owner deploy_owner
+    #     group deploy_group
     #     
     #     variables(
     #         :database   => (deploy[:database][:database] rescue nil),
