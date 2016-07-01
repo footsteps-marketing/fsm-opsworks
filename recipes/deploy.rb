@@ -31,7 +31,7 @@ search("aws_opsworks_app").each do |app|
         directory "/tmp/keys" do
             owner 'root'
             group 'root'
-            mode '0755'
+            mode '0700'
             recursive true
             action :create
         end
@@ -40,8 +40,14 @@ search("aws_opsworks_app").each do |app|
             file "#{key_path}" do
                 owner "root"
                 group "root"
-                mode "0644"
+                mode "0600"
                 content "#{app['app_source']['ssh_key']}"
+            end
+            file "#{key_path}.sh" do
+                owner "root"
+                group "root"
+                mode "0700"
+                content "#!/bin/sh\nexec /usr/bin/ssh -i #{key_path} \"$@\""
             end
         end
 
@@ -51,7 +57,7 @@ search("aws_opsworks_app").each do |app|
             user deploy_user
             group deploy_group
             if app['app_source']['ssh_key'] != 'null'
-                ssh_wrapper "ssh -i #{key_path}"
+                ssh_wrapper "#{key_path}.sh"
             end
             action :sync
         end
