@@ -90,6 +90,19 @@ search("aws_opsworks_app").each do |app|
         end
     end
 
+
+    # Write out the wordpress multisite snippet
+    template "/etc/nginx/snippets/wordpress-multisite.conf" do
+        source "wordpress-multisite.conf.erb"
+        mode 0644
+        owner "root"
+        group "root"
+
+        variables(
+            :app => (app rescue nil),
+        )
+    end
+
     
     # Write out nginx.conf stuff for domains
     app['domains'].each do |domain|
@@ -111,9 +124,10 @@ search("aws_opsworks_app").each do |app|
         end
     end
 
+    Chef::Log.info("*********** DATA SOURCES HERE ************")
+    Chef::Log.info(YAML::dump(app['data_sources']))
 
 =begin
-    @todo Write out an nginx server config for each domain on the app
     @todo Figure out data sources for the database and wp-config code below:
 
     template "#{deploy_root}/wp-config.php" do
