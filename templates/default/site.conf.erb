@@ -14,6 +14,23 @@ server {
 
     index index.php;
     include snippets/wordpress.conf;
+
+<% if node[:letsencrypt][:get_certificates] -%>
+    <% if defined?(@master) and @master == true -%>
+    location ^~ /.well-known/acme-challenge/ {
+        default_type “text/plain”;
+        root /tmp/challenges/;
+    }
+
+    location = /.well-known/acme-challenge/ {
+        return 404;
+    }
+    <% elsif defined?(@letsencrypt_master) -%>
+    location ^~ /.well-known/acme-challenge/ {
+        proxy_pass <%= @letsencrypt_master %>/.well-known/acme-challenge/;
+    }
+    <% end -%>
+<% end -%>
 }
 
 <% if ssl == true and defined?(@url) -%>
@@ -39,5 +56,22 @@ server {
 
     index index.php;
     include snippets/wordpress.conf;
+
+<% if node[:letsencrypt][:get_certificates] -%>
+    <% if defined?(@master) and @master == true -%>
+    location ^~ /.well-known/acme-challenge/ {
+        default_type “text/plain”;
+        root /tmp/challenges/;
+    }
+
+    location = /.well-known/acme-challenge/ {
+        return 404;
+    }
+    <% elsif defined?(@letsencrypt_master) -%>
+    location ^~ /.well-known/acme-challenge/ {
+        proxy_pass <%= @letsencrypt_master %>/.well-known/acme-challenge/;
+    }
+    <% end -%>
+<% end -%>
 }
 <% end -%>

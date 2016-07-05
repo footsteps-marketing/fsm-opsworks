@@ -107,22 +107,34 @@ search("aws_opsworks_app").each do |app|
     end
 
     
-    # Write out nginx.conf stuff for domains
-    app['domains'].each do |domain|
-        template "/etc/nginx/sites-available/#{domain}.conf" do
-            source "site.conf.erb"
-            mode 0644
-            owner "root"
-            group "root"
+    # 
+    # Write out nginx.conf stuff for our app
+    # 
+    template "/etc/nginx/sites-available/#{app['shortname']}.conf" do
+        source "site.conf.erb"
+        mode 0644
+        owner "root"
+        group "root"
 
-            variables(
-                :app => (app rescue nil),
-                :url => (domain rescue nil)
-            )
+        variables(
+            :app => (app rescue nil)
+        )
+    end
+
+    # Clean up old linked confs...
+    Dir.foreach('/etc/nginx/sites-enabled') do |item|
+        next if item == '.' or item == '..'
+        link "/etc/nginx/sites-enabled/#{item}" do
+            action :remove
+            only_if "test -L '/etc/nginx/sites-enabled/#{item}'"
         end
+    end
 
-        link "/etc/nginx/sites-enabled/#{domain}.conf" do
-            to "/etc/nginx/sites-available/#{domain}.conf"
+    # Link the new confs...
+    link "/etc/nginx/sites-enabled/#{app['shortname']}.conf" do
+        to "/etc/nginx/sites-available/#{app['shortname']}.conf"
+        if node[:letsencrypt][:get_certificates] == false
+            notifies :restart, "service[nginx]", :delayed
         end
     end
 
@@ -214,6 +226,6 @@ search("aws_opsworks_app").each do |app|
 
     # Restart nginx for good measure
     service "nginx" do
-        action :restart
+        action :nothing
     end
 end
