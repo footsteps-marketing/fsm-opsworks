@@ -21,7 +21,7 @@ search("aws_opsworks_app").first do |app|
     deploy_group = 'www-data'
 
     # Get a nice numeric string for the current version and set paths accordingly
-    deploy_root = "/srv/www/#{app['shortname']}/current"
+    app_root = "/srv/www/#{app['shortname']}/current"
 
     domains = Array.new
         
@@ -29,7 +29,7 @@ search("aws_opsworks_app").first do |app|
         block do
             #tricky way to load this Chef::Mixin::ShellOut utilities
             Chef::Resource::RubyBlock.send(:include, Chef::Mixin::ShellOut)
-            command = "php #{deploy_root}/current/get-mapped-domains.php"
+            command = "php #{app_root}/current/get-mapped-domains.php"
             command_out = shell_out(command)
             domains = command_out.stdout.split("\n")
         end
@@ -53,7 +53,7 @@ search("aws_opsworks_app").first do |app|
             interpreter "bash"
             user "root"
             code <<-EOH
-            letsencrypt --no-self-upgrade --webroot --expand --non-interactive --keep-until-expiring --agree-tos --email "#{node[:letsencrypt][:admin_email]}" --webroot-path "#{deploy_root}/current" -d "#{domain}"
+            letsencrypt --no-self-upgrade --webroot --expand --non-interactive --keep-until-expiring --agree-tos --email "#{node[:letsencrypt][:admin_email]}" --webroot-path "#{app_root}/current" -d "#{domain}"
             EOH
         end
 
@@ -65,7 +65,8 @@ search("aws_opsworks_app").first do |app|
 
             variables(
                 :app => (app rescue nil),
-                :url => (domain rescue nil)
+                :url => (domain rescue nil),
+                :ssl => Dir.exist?("/etc/letsencrypt/live/#{domain}")
             )
         end
 
@@ -74,5 +75,5 @@ search("aws_opsworks_app").first do |app|
         end
 
     end
-    
+
 end
