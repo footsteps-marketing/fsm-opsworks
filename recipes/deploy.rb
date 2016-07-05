@@ -8,17 +8,33 @@ require 'uri'
 require 'net/http'
 require 'net/https'
 
+le_master_instance = nil
+
 search("aws_opsworks_layer").each do |layer|
-    Chef::Log.info("**************** LAYER INFO FOR LAYER #{layer['name']}")
-    Chef::Log.info("**************** name: #{layer['name']}")
-    Chef::Log.info("**************** shortname: #{layer['shortname']}")
+    if layer[:shortname] != 'le-master'
+        next
+    end
+
+    search('aws_opsworks_instance').each do |instance|
+        if instance[:layer_ids].include? layer[:layer_id]
+            le_master_instance = instance
+        end
+    end
 end
+
+Chef::Log.info("**************** MASTER INSTANCE INFO")
+Chef::Log.info("**************** MASTER INSTANCE INFO")
+Chef::Log.info("\n\n\n")
+le_master_instance.inspect
+Chef::Log.info("\n\n\n")
+Chef::Log.info("**************** MASTER INSTANCE INFO")
+Chef::Log.info("**************** MASTER INSTANCE INFO")
 
 command = search('aws_opsworks_command').first
 search("aws_opsworks_app").each do |app|
     
     # Bail out if not deploying this app
-    if app['deploy'] === false
+    if app['deploy'] == false
         next
     end
 
