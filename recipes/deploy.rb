@@ -8,6 +8,12 @@ require 'uri'
 require 'net/http'
 require 'net/https'
 
+search("aws_opsworks_layer").each do |layer|
+    Chef::Log.info("**************** LAYER INFO FOR LAYER #{layer['name']}")
+    Chef::Log.info("**************** name: #{layer['name']}")
+    Chef::Log.info("**************** shortname: #{layer['shortname']}")
+end
+
 command = search('aws_opsworks_command').first
 search("aws_opsworks_app").each do |app|
     
