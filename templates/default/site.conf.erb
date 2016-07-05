@@ -20,7 +20,7 @@ server {
 
     fastcgi_param PHP_VALUE "upload_max_filesize=<%= node[:wordpress][:max_upload_size]%>
 post_max_size=<%= node[:wordpress][:max_upload_size]%>
-max_execution_time=<%= node[:wordpress][:max_execution_time]%>"
+max_execution_time=<%= node[:wordpress][:max_execution_time]%>";
 
 <% if node['wordpress']['multisite']['enabled'] == true -%>
     include snippets/wordpress-multisite.conf;
