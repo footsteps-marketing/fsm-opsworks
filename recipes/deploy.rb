@@ -18,14 +18,6 @@ search("aws_opsworks_layer").each do |layer|
 
     search('aws_opsworks_instance').each do |instance|
         if instance[:layer_ids].include? layer[:layer_id]
-            Chef::Log.info("**************** FOUND LE_MASTER_INSTANCE: #{instance[:hostname]}")
-            Chef::Log.info("**************** FOUND LE_MASTER_INSTANCE: #{instance[:hostname]}")
-            Chef::Log.info("\n\n\n")
-            instance.inspect
-            Chef::Log.info("\n\n\n")
-            Chef::Log.info("**************** FOUND LE_MASTER_INSTANCE: #{instance[:hostname]}")
-            Chef::Log.info("**************** FOUND LE_MASTER_INSTANCE: #{instance[:hostname]}")
-
             le_master_instance = instance
         end
     end
@@ -34,10 +26,12 @@ end
 Chef::Log.info("**************** MASTER INSTANCE INFO")
 Chef::Log.info("**************** MASTER INSTANCE INFO")
 Chef::Log.info("\n\n\n")
-le_master_instance.inspect
+Chef::Log.info("MASTER INSTANCE IP IS INFO #{le_master_instance[:hostname]}")
 Chef::Log.info("\n\n\n")
 Chef::Log.info("**************** MASTER INSTANCE INFO")
 Chef::Log.info("**************** MASTER INSTANCE INFO")
+
+exit
 
 command = search('aws_opsworks_command').first
 search("aws_opsworks_app").each do |app|
