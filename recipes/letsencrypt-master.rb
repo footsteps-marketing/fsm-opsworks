@@ -19,14 +19,14 @@ search("aws_opsworks_app").first do |app|
     app_root = "/srv/www/#{app['shortname']}/current"
 
     Domains.get app_root node[:wordpress][:multisite][:domain_current_site] do |domains|
-        domains.each do |domain|
-            script "letsencrypt_doer" do
-                interpreter "bash"
-                user "root"
-                code <<-EOH
-                letsencrypt --no-self-upgrade --webroot --expand --non-interactive --keep-until-expiring --agree-tos --email "#{node[:letsencrypt][:admin_email]}" --webroot-path "#{app_root}/current" -d "#{domain}"
-                EOH
-            end
+        domains.each do |domain|            
+            # script "letsencrypt_doer" do
+            #     interpreter "bash"
+            #     user "root"
+            #     code <<-EOH
+            #     letsencrypt --no-self-upgrade --webroot --expand --non-interactive --keep-until-expiring --agree-tos --email "#{node[:letsencrypt][:admin_email]}" --webroot-path "#{app_root}/current" -d "#{domain}"
+            #     EOH
+            # end
         end
     end
 

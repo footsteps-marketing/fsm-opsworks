@@ -10,6 +10,9 @@ require 'net/https'
 
 le_master_instance = nil
 
+#
+# Get the LetsEncrypt Master Instance Info
+# 
 search("aws_opsworks_layer").each do |layer|
     if layer[:shortname] != 'le-master'
         next
@@ -22,16 +25,6 @@ search("aws_opsworks_layer").each do |layer|
         end
     end
 end
-
-Chef::Log.info("**************** MASTER INSTANCE INFO")
-Chef::Log.info("**************** MASTER INSTANCE INFO")
-Chef::Log.info("\n\n\n")
-Chef::Log.info("MASTER INSTANCE IP IS INFO #{le_master_instance[:hostname]}")
-Chef::Log.info("\n\n\n")
-Chef::Log.info("**************** MASTER INSTANCE INFO")
-Chef::Log.info("**************** MASTER INSTANCE INFO")
-
-exit
 
 command = search('aws_opsworks_command').first
 search("aws_opsworks_app").each do |app|
@@ -118,6 +111,16 @@ search("aws_opsworks_app").each do |app|
         end
     end
 
+    
+    # Write our lil' domain getter script out
+    template "#{deploy[:deploy_to]}/current/get-mapped-domains.php" do
+        source "get-mapped-domains.php.erb"
+        mode 0700
+        group "root"
+        owner "root"
+    end
+
+
 
     # Write out the wordpress multisite snippet
     template "/etc/nginx/snippets/wordpress.conf" do
@@ -161,6 +164,34 @@ search("aws_opsworks_app").each do |app|
         to "/etc/nginx/sites-available/#{app['shortname']}.conf"
         if node[:letsencrypt][:get_certificates] == false
             notifies :restart, "service[nginx]", :delayed
+        end
+    end
+
+    #
+    # Now write out the domain confs...
+    # 
+    Domains.get app_root node[:wordpress][:multisite][:domain_current_site] do |domains|
+        domains.each do |domain|
+            Chef::log.info("***** Mapping Domain: #{domain}")
+            template "/etc/nginx/sites-available/#{domain}.conf" do
+                source "site.conf.erb"
+                mode 0644
+                owner "root"
+                group "root"
+
+                variables(
+                    :app => (app rescue nil),
+                    :url => (domain rescue nil),
+                    :ssl => node[:letsencrypt][:get_certificates]
+                )
+            end
+
+            link "/etc/nginx/sites-enabled/#{domain}.conf" do
+                to "/etc/nginx/sites-available/#{domain}.conf"
+                if node[:letsencrypt][:get_certificates] == false
+                    notifies :restart, "service[nginx]", :delayed
+                end
+            end
         end
     end
 
