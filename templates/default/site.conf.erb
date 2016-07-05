@@ -33,7 +33,7 @@ server {
 <% end -%>
 }
 
-<% if ssl == true and defined?(@url) -%>
+<% if @ssl == true and defined?(@url) -%>
 server {
     listen 443;
     server_name <%= @url %>;

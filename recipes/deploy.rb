@@ -123,7 +123,8 @@ search("aws_opsworks_app").each do |app|
         group "root"
 
         variables(
-            :app => (app rescue nil)
+            :app => (app rescue nil),
+            :ssl => node[:letsencrypt][:get_certificates]
         )
     end
 
