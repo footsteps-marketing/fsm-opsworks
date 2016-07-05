@@ -24,6 +24,11 @@ end
 # Handle a bug with kswapd0 eating lots of CPU
 # See http://askubuntu.com/a/764134
 cron "fix_kswapd0" do
+    minute '*'
+    hour '*'
+    weekday '*'
+    day '*'
+    month '*'
     user 'root'
     command "echo 1 > /proc/sys/vm/drop_cache"
 end
