@@ -1,7 +1,7 @@
 module Domains
     def self.get(app_root, app_domain)
         domains = Array.new
-        Chef.ruby_block "check_curl_command_output" do
+        Chef::Recipe.ruby_block "check_curl_command_output" do
             block do
                 #tricky way to load this Chef::Mixin::ShellOut utilities
                 Chef::Resource::RubyBlock.send(:include, Chef::Mixin::ShellOut)
