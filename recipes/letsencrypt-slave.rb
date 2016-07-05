@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: fsm-opsworks
-# Recipe:: letsencrypt
+# Recipe:: letsencrypt-slave
 #
 # Copyright (c) 2016 FootSteps Marketing, All Rights Reserved.
 

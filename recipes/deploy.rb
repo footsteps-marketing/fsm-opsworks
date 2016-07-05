@@ -95,8 +95,8 @@ search("aws_opsworks_app").each do |app|
 
 
     # Write out the wordpress multisite snippet
-    template "/etc/nginx/snippets/wordpress-multisite.conf" do
-        source "wordpress-multisite.conf.erb"
+    template "/etc/nginx/snippets/wordpress.conf" do
+        source "wordpress.conf.erb"
         mode 0644
         owner "root"
         group "root"

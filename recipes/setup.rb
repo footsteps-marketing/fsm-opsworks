@@ -4,6 +4,9 @@
 #
 # Copyright (c) 2016 FootSteps Marketing, All Rights Reserved.
 
+#
+# Install some necessary packages
+# 
 [
     'nginx',
     'php-fpm',
@@ -21,18 +24,28 @@
     end
 end
 
+
+
+#
 # Handle a bug with kswapd0 eating lots of CPU
 # See http://askubuntu.com/a/764134
-cron "fix_kswapd0" do
-    minute '*'
-    hour '*'
-    weekday '*'
-    day '*'
-    month '*'
-    user 'root'
-    command "echo 1 > /proc/sys/vm/drop_cache"
+# 
+reboot 'now' do
+    action :nothing
+    reason 'Need to reboot for a fix'
 end
 
+file '/etc/udev/rules.d/40-vm-hotadd.rules' do
+    owner 'root'
+    group 'root'
+    action :touch
+    notifies :reboot_now, 'reboot[now]', :immediately
+end
+
+
+# 
+# Install some image processing libraries
+# 
 script "install_mozjpeg" do
     interpreter "bash"
     cwd "/tmp"
