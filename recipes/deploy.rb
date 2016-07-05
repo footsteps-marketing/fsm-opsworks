@@ -131,7 +131,7 @@ search("aws_opsworks_app").each do |app|
     Dir.foreach('/etc/nginx/sites-enabled') do |item|
         next if item == '.' or item == '..'
         link "/etc/nginx/sites-enabled/#{item}" do
-            action :remove
+            action :delete
             only_if "test -L '/etc/nginx/sites-enabled/#{item}'"
         end
     end
