@@ -48,7 +48,7 @@ search("aws_opsworks_app").each do |app|
         group "root"
 
         variables(
-            :logbase => '/vagrant/log/nginx',
+            :logbase => '/vagrant/env/log/nginx',
             :app => (app rescue nil),
             :ssl => node[:letsencrypt][:get_certificates]
         )
@@ -74,7 +74,7 @@ search("aws_opsworks_app").each do |app|
     #
     # Now write out the domain confs...
     # 
-    domain = 'fsm-wordpress.dev'
+    domain = 'fsm-wp.env'
     Chef::Log.info("***** Mapping Domain: #{domain}")
     template "/etc/nginx/sites-available/#{domain}.conf" do
         # action :nothing
@@ -85,7 +85,7 @@ search("aws_opsworks_app").each do |app|
         group "root"
 
         variables(
-            :logbase => '/vagrant/log/nginx',
+            :logbase => '/vagrant/env/log/nginx',
             :app => (app rescue nil),
             :url => (domain rescue nil),
             :ssl => node[:letsencrypt][:get_certificates]

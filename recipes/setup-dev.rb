@@ -15,7 +15,8 @@ mysql_service 'default' do
 end
 
 [
-    'php-xdebug'
+    'php-xdebug',
+    'npm'
 ].each do |installPackage|
     package "#{installPackage}" do
         package_name installPackage
@@ -23,6 +24,8 @@ end
 end
 
 template "/etc/php/7.0/fpm/php.ini" do
+    action :nothing
+    subscribes :create, 'package[php-fpm]', :immediately
     source "php.ini.erb"
 
 end
