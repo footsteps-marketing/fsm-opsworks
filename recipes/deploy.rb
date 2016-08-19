@@ -145,6 +145,7 @@ search("aws_opsworks_app").each do |app|
         group "root"
 
         variables(
+            :server_root => server_root,
             :logbase => '/var/log/nginx',
             :app => (app rescue nil),
             :ssl => node[:letsencrypt][:get_certificates]
@@ -181,6 +182,7 @@ search("aws_opsworks_app").each do |app|
                 group "root"
 
                 variables(
+                    :server_root => server_root,
                     :logbase => '/var/log/nginx',
                     :app => (app rescue nil),
                     :url => (domain rescue nil),

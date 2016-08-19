@@ -10,7 +10,7 @@
 mysql_service 'default' do
   port '3306'
   version '5.7'
-  initial_root_password 'the_password'
+  initial_root_password node[:database][:db_password]
   action [:create, :start]
 end
 
@@ -25,7 +25,15 @@ end
 
 template "/etc/php/7.0/fpm/php.ini" do
     action :nothing
-    subscribes :create, 'package[php-fpm]', :immediately
-    source "php.ini.erb"
+    subscribes :create, 'package[php-fpm]', :delayed
+    notifies :restart, 'service[php7.0-fpm]', :delayed
+    source "etc/php/7.0/fpm/php.ini.erb"
+end
 
+service "php7.0-fpm" do
+    action :nothing
+end
+
+service "nginx" do
+    action :nothing
 end

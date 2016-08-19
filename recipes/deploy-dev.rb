@@ -9,22 +9,16 @@ require 'net/http'
 require 'net/https'
 
 search("aws_opsworks_app").each do |app|
-
-    # Set the deploy user
-    # @todo -- do this programmatically?
     deploy_user = 'www-data'
     deploy_group = 'www-data'
-
-    # Get a nice numeric string for the current version and set paths accordingly
-    deploy_root = "/srv/www/#{app['shortname']}/current"
-    Chef::Log.info("**************** Deploying #{app['shortname']} to #{deploy_root}")
-
-    
+    deploy_root = "/vagrant/"
+    server_root = deploy_root
 
     # Write out the wordpress multisite snippet
     template "/etc/nginx/snippets/wordpress.conf" do
-        # action :nothing
-        # subscribes :create, 'package[nginx]', :immediately
+        action :nothing
+        subscribes :create, 'package[nginx]', :immediately
+        notifies :restart, 'service[nginx]', :delayed
         source "wordpress.conf.erb"
         mode 0644
         owner "root"
@@ -40,14 +34,15 @@ search("aws_opsworks_app").each do |app|
     # Write out nginx.conf stuff for our app
     # 
     template "/etc/nginx/sites-available/#{app['shortname']}.conf" do
-        # action :nothing
-        # subscribes :create, 'package[nginx]', :immediately
+        action :nothing
+        subscribes :create, 'package[nginx]', :immediately
         source "site.conf.erb"
         mode 0644
         owner "root"
         group "root"
 
         variables(
+            :server_root => server_root,
             :logbase => '/vagrant/env/log/nginx',
             :app => (app rescue nil),
             :ssl => node[:letsencrypt][:get_certificates]
@@ -57,48 +52,16 @@ search("aws_opsworks_app").each do |app|
     # Clean up old linked confs...
     link "/etc/nginx/sites-enabled/default" do
         action :delete
-        # subscribes :delete, 'package[nginx]', :immediately
+        notifies :restart, 'service[nginx]', :delayed
         only_if "test -L '/etc/nginx/sites-enabled/default'"
     end
 
     # Link the new confs...
     link "/etc/nginx/sites-enabled/#{app['shortname']}.conf" do
         to "/etc/nginx/sites-available/#{app['shortname']}.conf"
-        # action :nothing
-        # subscribes :create, 'package[nginx]', :immediately
-        if node[:letsencrypt][:get_certificates] == false
-            notifies :restart, "service[nginx]", :delayed
-        end
-    end
-
-    #
-    # Now write out the domain confs...
-    # 
-    domain = 'fsm-wp.env'
-    Chef::Log.info("***** Mapping Domain: #{domain}")
-    template "/etc/nginx/sites-available/#{domain}.conf" do
-        # action :nothing
-        # subscribes :create, 'package[nginx]', :immediately
-        source "site.conf.erb"
-        mode 0644
-        owner "root"
-        group "root"
-
-        variables(
-            :logbase => '/vagrant/env/log/nginx',
-            :app => (app rescue nil),
-            :url => (domain rescue nil),
-            :ssl => node[:letsencrypt][:get_certificates]
-        )
-    end
-
-    link "/etc/nginx/sites-enabled/#{domain}.conf" do
-        # action :nothing
-        # subscribes :create, "template[/etc/nginx/sites-available/#{domain}.conf]", :immediately
-        to "/etc/nginx/sites-available/#{domain}.conf"
-        if node[:letsencrypt][:get_certificates] == false
-            notifies :restart, "service[nginx]", :delayed
-        end
+        action :nothing
+        subscribes :create, "template[/etc/nginx/sites-available/#{app['shortname']}.conf]", :immediately
+        notifies :restart, 'service[nginx]', :delayed
     end
 
 
@@ -116,17 +79,14 @@ search("aws_opsworks_app").each do |app|
     end
 
 
-
     # Get database info
-    db_name = 'fsm_wordpress'
-    db_user = 'root'
-    db_password = 'the_password'
+    db_name = node[:database][:db_name]
+    db_user = node[:database][:db_user]
+    db_password = node[:database][:db_password]
     db_host = 'localhost'
 
     # Write out wp-config.php
     template "#{deploy_root}/wp-config.php" do
-        # action :nothing
-        # subscribes :create, 'package[nginx]', :immediately
         source "wp-config.php.erb"
         
         variables(
@@ -136,13 +96,5 @@ search("aws_opsworks_app").each do |app|
             :host       => (db_host rescue nil),
             :keys       => (keys rescue nil)
         )
-    end
-
-
-
-
-    # Restart nginx for good measure
-    service "nginx" do
-        action :nothing
     end
 end

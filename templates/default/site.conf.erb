@@ -10,7 +10,7 @@ server {
     error_log <%= @logbase %>/<%= @app['shortname'] %>.error.log warn;
 <% end -%>
 
-    root /srv/www/<%= @app['shortname'] %>/current;
+    root <%= @server_root %>;
     index index.php;
     include snippets/wordpress.conf;
 
@@ -51,7 +51,7 @@ server {
     ssl_stapling_verify on;
     add_header Strict-Transport-Security max-age=15768000;
 
-    root /srv/www/<%= @app['shortname'] %>/current;
+    root <%= @server_root %>;
 
     index index.php;
     include snippets/wordpress.conf;
