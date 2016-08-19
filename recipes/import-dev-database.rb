@@ -32,6 +32,18 @@ EOF
     only_if { ::File.exists?(db_file) }
 end
 
+bash "install_wp_cli" do
+    action :nothing
+    subscribes :run, 'bash[import_database]', :delayed
+    cwd "/vagrant"
+    user "vagrant"
+    code <<-EOH
+        wp plugin deactivate wordpress-mu-domain-mapping --network
+        wp plugin deactivate broken-link-checker --network
+        wp plugin deactivate wordfence --network
+    EOH
+end
+
 service "nginx" do
     action :nothing
 end
