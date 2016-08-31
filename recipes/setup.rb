@@ -14,6 +14,7 @@
     'php-mcrypt',
     'php-curl',
     'php7.0-xml',
+    'php-mbstring',
     'pngquant',
     'jpegoptim',
     'imagemagick',
