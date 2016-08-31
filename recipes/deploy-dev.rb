@@ -78,7 +78,6 @@ search("aws_opsworks_app").each do |app|
         keys = node['wordpress']['salt']
     end
 
-
     # Get database info
     db_name = node[:database][:db_name]
     db_user = node[:database][:db_user]
