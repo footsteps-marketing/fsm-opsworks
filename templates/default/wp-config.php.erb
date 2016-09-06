@@ -101,11 +101,20 @@ define('FSM_GOOGLE_PUBLIC_API_KEY', '<%= node['wordpress']['fsm_google_public_ap
 
 
 
-<% if node['wordpress']['fsm_circular_api_secret']!=false -%>
 /**
- * FSM Circular API Secret
+ * FSM Circular API Secrets
  **/
+<% if node['wordpress']['fsm_circular_api_secret']!=false -%>
 define('FSM_CIRCULAR_API_SECRET', '<%= node['wordpress']['fsm_circular_api_secret'] %>');
+<% end -%>
+<% if node['wordpress']['fsm_circular_response_signing_key']!=false -%>
+define('FSM_CIRCULAR_RESPONSE_SIGNING_KEY', '<%= node['wordpress']['fsm_circular_response_signing_key'] %>');
+<% end -%>
+<% if node['wordpress']['fsm_circular_processor_endpoint']!=false -%>
+define('FSM_CIRCULAR_PROCESSOR_ENDPOINT', '<%= node['wordpress']['fsm_circular_processor_endpoint'] %>');
+<% end -%>
+<% if node['wordpress']['fsm_circular_api_key']!=false -%>
+define('FSM_CIRCULAR_API_KEY', '<%= node['wordpress']['fsm_circular_api_key'] %>');
 <% end -%>
 
 
