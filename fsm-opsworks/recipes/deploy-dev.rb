@@ -11,7 +11,7 @@ require 'net/https'
 search("aws_opsworks_app").each do |app|
     deploy_user = 'www-data'
     deploy_group = 'www-data'
-    deploy_root = "/vagrant/"
+    deploy_root = "/vagrant/wordpress/"
     server_root = deploy_root
 
     # Write out the wordpress multisite snippet
