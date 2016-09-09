@@ -35,7 +35,7 @@ end
 bash "install_wp_cli" do
     action :nothing
     subscribes :run, 'bash[import_database]', :delayed
-    cwd "/vagrant"
+    cwd "/vagrant/wordpress"
     user "vagrant"
     code <<-EOH
         wp plugin deactivate wordpress-mu-domain-mapping --network
