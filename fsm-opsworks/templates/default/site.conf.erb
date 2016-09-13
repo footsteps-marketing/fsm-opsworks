@@ -10,7 +10,7 @@ server {
     error_log <%= @logbase %>/<%= @app['shortname'] %>.error.log warn;
 <% end -%>
 
-    root <%= @server_root %>;
+    root <%= @server_root %>/wordpress;
     index index.php;
     include snippets/wordpress.conf;
 

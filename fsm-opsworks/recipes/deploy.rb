@@ -286,16 +286,16 @@ search("aws_opsworks_app").each do |app|
     exclude_themes = node['wordpress']['exclude_themes']
 
     exclude_plugins.each do |plugin|
-        Chef::Log.debug("Deleting #{deploy_root}/current/wp-content/plugins/#{plugin}")
-        directory "#{deploy_root}/current/wp-content/plugins/#{plugin}" do
+        Chef::Log.debug("Deleting #{deploy_root}/wordpress/wp-content/plugins/#{plugin}")
+        directory "#{deploy_root}/wordpress/wp-content/plugins/#{plugin}" do
             recursive true
             action :delete
         end
     end
 
     exclude_themes.each do |theme|
-        Chef::Log.debug("#{deploy_root}/current/wp-content/themes/#{theme}")
-        directory "#{deploy_root}/current/wp-content/themes/#{theme}" do
+        Chef::Log.debug("#{deploy_root}/wordpress/wp-content/themes/#{theme}")
+        directory "#{deploy_root}/wordpress/wp-content/themes/#{theme}" do
             recursive true
             action :delete
         end
@@ -303,7 +303,7 @@ search("aws_opsworks_app").each do |app|
 
 
     # Make the minifier happy
-    directory "#{deploy_root}/current/wp-content/plugins/bwp-minify/cache" do
+    directory "#{deploy_root}/wordpress/wp-content/plugins/bwp-minify/cache" do
         recursive true
         owner deploy_user
         group deploy_group
@@ -315,6 +315,12 @@ search("aws_opsworks_app").each do |app|
     # Link the new deployment up
     link "#{server_root}" do
         to deploy_root
+    end
+
+
+    # Clean up old deployments (latest 5 persist)
+    bash "cleanup" do
+        code "ls -tp | grep '/$' | tail -n +6 | xargs -I {} rm -rf -- {}"
     end
 
     # Restart nginx for good measure

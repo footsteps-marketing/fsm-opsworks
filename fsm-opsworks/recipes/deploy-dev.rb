@@ -11,7 +11,7 @@ require 'net/https'
 search("aws_opsworks_app").each do |app|
     deploy_user = 'www-data'
     deploy_group = 'www-data'
-    deploy_root = "/vagrant/wordpress/"
+    deploy_root = "/vagrant/"
     server_root = deploy_root
 
     # Write out the wordpress multisite snippet
@@ -85,7 +85,7 @@ search("aws_opsworks_app").each do |app|
     db_host = 'localhost'
 
     # Write out wp-config.php
-    template "#{deploy_root}/wp-config.php" do
+    template "#{deploy_root}/wordpress/wp-config.php" do
         source "wp-config.php.erb"
         
         variables(
