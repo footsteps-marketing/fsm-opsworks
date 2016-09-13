@@ -57,7 +57,6 @@ search("aws_opsworks_app").each do |app|
 
     
     # deploy the app from its source
-    # @todo handle non-git sources?
     if app['app_source']['type'] == 'git'
 
         # Set up folders and key files
@@ -108,6 +107,38 @@ search("aws_opsworks_app").each do |app|
                 ssh_wrapper "#{wrapper_path}"
             end
             action :sync
+        end
+    end
+
+
+    # deploy the app from its source
+    if app['app_source']['type'] == 's3'
+
+        package "unzip" do
+          retries 2
+        end
+
+        s3_bucket, s3_key, base_url = OpsWorks::SCM::S3.parse_uri(app[:app_source][:url])
+        
+        tmp_download_location = "/tmp/#{s3_key}"
+
+        s3_file tmp_download_location do
+            bucket s3_bucket
+            remote_path s3_key
+            s3_url base_url
+            aws_access_key_id app[:app_source][:username]
+            aws_secret_access_key app[:app_source][:password]
+            owner "root"
+            group "root"
+            mode "0600"
+            action :create
+        end
+
+        tar_extract "#{tmp_download_location}" do
+            target_dir "#{deploy_root}"
+            creates "#{deploy_root}/wordpress"
+            user deploy_user
+            group deploy_group
         end
     end
 
