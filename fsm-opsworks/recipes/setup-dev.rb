@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: fsm-opsworks
-# Recipe:: setup
+# Recipe:: setup-dev
 #
 # Copyright (c) 2016 FootSteps Marketing, All Rights Reserved.
 
