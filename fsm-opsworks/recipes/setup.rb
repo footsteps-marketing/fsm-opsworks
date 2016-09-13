@@ -4,9 +4,7 @@
 #
 # Copyright (c) 2016 FootSteps Marketing, All Rights Reserved.
 
-#
-# Install some necessary packages
-# 
+# Install some necessary packages 
 [
     'nginx',
     'php-fpm',
