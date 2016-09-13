@@ -150,8 +150,12 @@ search("aws_opsworks_app").each do |app|
 
     # Write out the wordpress multisite snippet
     template "/etc/nginx/snippets/wordpress.conf" do
-        action :nothing
-        subscribes :create, 'package[nginx]', :immediately
+        if command['type'] == 'deploy'
+            action :create
+        else
+            action :nothing
+            subscribes :create, 'package[nginx]', :immediately
+        end
         source "wordpress.conf.erb"
         mode 0644
         owner "root"
@@ -167,8 +171,12 @@ search("aws_opsworks_app").each do |app|
     # Write out nginx.conf stuff for our app
     # 
     template "/etc/nginx/sites-available/#{app['shortname']}.conf" do
-        action :nothing
-        subscribes :create, 'package[nginx]', :immediately
+        if command['type'] == 'deploy'
+            action :create
+        else
+            action :nothing
+            subscribes :create, 'package[nginx]', :immediately
+        end
         source "site.conf.erb"
         mode 0644
         owner "root"
@@ -186,8 +194,12 @@ search("aws_opsworks_app").each do |app|
     directory 'delete_sites_enabled' do
         recursive true
         path '/etc/nginx/sites-enabled'
-        action :nothing
-        subscribes :delete, 'package[nginx]', :immediately
+        if command['type'] == 'deploy'
+            action :delete
+        else
+            action :nothing
+            subscribes :delete, 'package[nginx]', :immediately
+        end
     end
 
     directory 'create_sites_enabled' do
@@ -356,8 +368,4 @@ search("aws_opsworks_app").each do |app|
     service "nginx" do
         action :nothing
     end
-end
-
-package 'nginx' do
-    action :upgrade
 end
