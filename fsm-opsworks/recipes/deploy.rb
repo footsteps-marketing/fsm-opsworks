@@ -122,11 +122,11 @@ search("aws_opsworks_app").each do |app|
         
         tmp_download_location = "/tmp/#{s3_key}"
 
-        s3_file tmp_download_location do
+        s3_file "#{tmp_download_location}" do
             bucket s3_bucket
             remote_path s3_key
             s3_url base_url
-            aws_access_key_id app[:app_source][:username]
+            aws_access_key_id app[:app_source][:user]
             aws_secret_access_key app[:app_source][:password]
             owner "root"
             group "root"
