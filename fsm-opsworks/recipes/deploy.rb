@@ -183,24 +183,26 @@ search("aws_opsworks_app").each do |app|
     end
 
     # Clean up old linked confs...
-    ruby_block 'clean_up_old_confs' do
+    directory 'delete_sites_enabled' do
+        recursive true
+        path '/etc/nginx/sites-enabled'
         action :nothing
-        subscribes :run, 'package[nginx]', :immediately
-        block do
-            Dir.foreach('/etc/nginx/sites-enabled') do |item|
-                next if item == '.' or item == '..'
-                link "/etc/nginx/sites-enabled/#{item}" do
-                    action :delete
-                    only_if "test -L '/etc/nginx/sites-enabled/#{item}'"
-                end
-            end
-        end    
+        subscribes :delete, 'package[nginx]', :immediately
+    end
+
+    directory 'create_sites_enabled' do
+        action :nothing
+        path '/etc/nginx/sites-enabled'
+        owner 'root'
+        group 'root'
+        mode '0755'
+        subscribes :create, 'directory[delete_sites_enabled]', :immediately
     end
 
     # Link the new confs...
     link "/etc/nginx/sites-enabled/#{app['shortname']}.conf" do
         action :nothing
-        subscribes :create, 'ruby_block[clean_up_old_confs]', :immediately
+        subscribes :create, 'directory[create_sites_enabled]', :immediately
         to "/etc/nginx/sites-available/#{app['shortname']}.conf"
         if node[:letsencrypt][:get_certificates] == false
             notifies :restart, "service[nginx]", :delayed
