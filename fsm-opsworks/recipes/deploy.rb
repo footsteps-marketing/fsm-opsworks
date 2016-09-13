@@ -41,6 +41,7 @@ search("aws_opsworks_app").each do |app|
 
     # Get a nice numeric string for the current version and set paths accordingly
     current_revision = command['sent_at'].delete("^0-9")
+    revision_root = "/srv/www/#{app['shortname']}"
     deploy_root = "/srv/www/#{app['shortname']}/#{current_revision}"
     server_root = "/srv/www/#{app['shortname']}/current"
     Chef::Log.info("**************** Deploying #{app['shortname']} to #{deploy_root}")
@@ -343,9 +344,12 @@ search("aws_opsworks_app").each do |app|
     # Clean up old deployments (latest 5 persist)
     bash "cleanup" do
         action :nothing
+        cwd revision_root
         subscribes :run, "link[#{server_root}]", :immediately
         code "ls -tp | grep '/$' | tail -n +6 | xargs -I {} rm -rf -- {}"
     end
+
+
 
     # Restart nginx for good measure
     service "nginx" do
