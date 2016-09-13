@@ -128,7 +128,7 @@ search("aws_opsworks_app").each do |app|
             s3_url base_url
             aws_access_key_id app[:app_source][:user]
             aws_secret_access_key app[:app_source][:password]
-            user deploy_user
+            owner deploy_user
             group deploy_group
             mode "0600"
             action :create
@@ -137,7 +137,7 @@ search("aws_opsworks_app").each do |app|
         tar_extract "#{tmp_download_location}" do
             target_dir "#{deploy_root}"
             creates "#{deploy_root}/wordpress"
-            user deploy_user
+            owner deploy_user
             group deploy_group
             action :extract_local
         end
