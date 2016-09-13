@@ -137,7 +137,7 @@ search("aws_opsworks_app").each do |app|
         tar_extract "#{tmp_download_location}" do
             target_dir "#{deploy_root}"
             creates "#{deploy_root}/wordpress"
-            owner deploy_user
+            user deploy_user
             group deploy_group
             action :extract_local
         end
