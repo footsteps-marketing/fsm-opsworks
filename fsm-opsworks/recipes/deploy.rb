@@ -8,6 +8,10 @@ require 'uri'
 require 'net/http'
 require 'net/https'
 
+package 'nginx' do
+    action :upgrade
+end
+
 le_master_instance = nil
 
 #
