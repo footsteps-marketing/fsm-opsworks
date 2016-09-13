@@ -145,17 +145,6 @@ search("aws_opsworks_app").each do |app|
         end
     end
 
-    
-    # Write our lil' domain getter script out
-    template "#{deploy_root}/get-mapped-domains.php" do
-        action :nothing
-        subscribes :create, 'package[nginx]', :immediately
-        source "get-mapped-domains.php.erb"
-        mode 0700
-        group "root"
-        owner "root"
-    end
-
 
 
     # Write out the wordpress multisite snippet
@@ -295,6 +284,17 @@ search("aws_opsworks_app").each do |app|
             :host       => (db_host rescue nil),
             :keys       => (keys rescue nil)
         )
+    end
+
+
+    # Write our lil' domain getter script out
+    template "#{deploy_root}/get-mapped-domains.php" do
+        action :nothing
+        subscribes :create, "template[#{deploy_root}/wordpress/wp-config.php]", :immediately
+        source "get-mapped-domains.php.erb"
+        mode 0700
+        group "root"
+        owner "root"
     end
 
 
