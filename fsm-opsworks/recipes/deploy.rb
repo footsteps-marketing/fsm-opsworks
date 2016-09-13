@@ -120,7 +120,7 @@ search("aws_opsworks_app").each do |app|
 
         s3_bucket, s3_key, base_url = OpsWorks::SCM::S3.parse_uri(app[:app_source][:url])
         
-        tmp_download_location = "/tmp/#{s3_key}"
+        tmp_download_location = "/tmp/fsm-wordpress.tar.gz"
 
         s3_file "#{tmp_download_location}" do
             bucket s3_bucket
