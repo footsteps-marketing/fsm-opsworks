@@ -103,6 +103,7 @@ search("aws_opsworks_app").each do |app|
             repository app['app_source']['url']
             user deploy_user
             group deploy_group
+            notifies :create, "template[#{deploy_root}/wordpress/wp-config.php]", :immediately
             if app['app_source']['ssh_key'] != 'null'
                 ssh_wrapper "#{wrapper_path}"
             end
@@ -137,6 +138,7 @@ search("aws_opsworks_app").each do |app|
         tar_extract "#{tmp_download_location}" do
             target_dir "#{deploy_root}"
             creates "#{deploy_root}/wordpress"
+            notifies :create, "template[#{deploy_root}/wordpress/wp-config.php]", :immediately
             user deploy_user
             group deploy_group
             action :extract_local
@@ -146,6 +148,8 @@ search("aws_opsworks_app").each do |app|
     
     # Write our lil' domain getter script out
     template "#{deploy_root}/get-mapped-domains.php" do
+        action :nothing
+        subscribes :create, 'package[nginx]', :immediately
         source "get-mapped-domains.php.erb"
         mode 0700
         group "root"
@@ -156,6 +160,8 @@ search("aws_opsworks_app").each do |app|
 
     # Write out the wordpress multisite snippet
     template "/etc/nginx/snippets/wordpress.conf" do
+        action :nothing
+        subscribes :create, 'package[nginx]', :immediately
         source "wordpress.conf.erb"
         mode 0644
         owner "root"
@@ -171,6 +177,8 @@ search("aws_opsworks_app").each do |app|
     # Write out nginx.conf stuff for our app
     # 
     template "/etc/nginx/sites-available/#{app['shortname']}.conf" do
+        action :nothing
+        subscribes :create, 'package[nginx]', :immediately
         source "site.conf.erb"
         mode 0644
         owner "root"
@@ -184,25 +192,25 @@ search("aws_opsworks_app").each do |app|
         )
     end
 
-    directory '/etc/nginx/sites-enabled' do
-        owner 'root'
-        group 'root'
-        mode '0755'
-        recursive true
-        action :create        
-    end
-
     # Clean up old linked confs...
-    Dir.foreach('/etc/nginx/sites-enabled') do |item|
-        next if item == '.' or item == '..'
-        link "/etc/nginx/sites-enabled/#{item}" do
-            action :delete
-            only_if "test -L '/etc/nginx/sites-enabled/#{item}'"
-        end
+    ruby_block 'clean_up_old_confs' do
+        action :nothing
+        subscribes :run, 'package[nginx]', :immediately
+        block do
+            Dir.foreach('/etc/nginx/sites-enabled') do |item|
+                next if item == '.' or item == '..'
+                link "/etc/nginx/sites-enabled/#{item}" do
+                    action :delete
+                    only_if "test -L '/etc/nginx/sites-enabled/#{item}'"
+                end
+            end
+        end    
     end
 
     # Link the new confs...
     link "/etc/nginx/sites-enabled/#{app['shortname']}.conf" do
+        action :nothing
+        subscribes :create, 'ruby_block[clean_up_old_confs]', :immediately
         to "/etc/nginx/sites-available/#{app['shortname']}.conf"
         if node[:letsencrypt][:get_certificates] == false
             notifies :restart, "service[nginx]", :delayed
@@ -273,7 +281,8 @@ search("aws_opsworks_app").each do |app|
     end
 
     # Write out wp-config.php
-    template "#{deploy_root}/wp-config.php" do
+    template "#{deploy_root}/wordpress/wp-config.php" do
+        action :nothing
         source "wp-config.php.erb"
         mode 0660
         owner deploy_user
@@ -297,7 +306,8 @@ search("aws_opsworks_app").each do |app|
         Chef::Log.debug("Deleting #{deploy_root}/wordpress/wp-content/plugins/#{plugin}")
         directory "#{deploy_root}/wordpress/wp-content/plugins/#{plugin}" do
             recursive true
-            action :delete
+            action :nothing
+            subscribes :delete, "template[#{deploy_root}/wordpress/wp-config.php]", :immediately
         end
     end
 
@@ -305,7 +315,8 @@ search("aws_opsworks_app").each do |app|
         Chef::Log.debug("#{deploy_root}/wordpress/wp-content/themes/#{theme}")
         directory "#{deploy_root}/wordpress/wp-content/themes/#{theme}" do
             recursive true
-            action :delete
+            action :nothing
+            subscribes :delete, "template[#{deploy_root}/wordpress/wp-config.php]", :immediately
         end
     end
 
@@ -316,18 +327,23 @@ search("aws_opsworks_app").each do |app|
         owner deploy_user
         group deploy_group
         mode '0775'
-        action :create
+        action :nothing
+        subscribes :create, "template[#{deploy_root}/wordpress/wp-config.php]", :immediately
     end
     
 
     # Link the new deployment up
     link "#{server_root}" do
         to deploy_root
+        action :nothing
+        subscribes :create, "template[#{deploy_root}/wordpress/wp-config.php]", :immediately
     end
 
 
     # Clean up old deployments (latest 5 persist)
     bash "cleanup" do
+        action :nothing
+        subscribes :run, "link[#{server_root}]", :immediately
         code "ls -tp | grep '/$' | tail -n +6 | xargs -I {} rm -rf -- {}"
     end
 
