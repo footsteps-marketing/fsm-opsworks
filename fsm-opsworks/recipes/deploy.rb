@@ -122,7 +122,7 @@ search("aws_opsworks_app").each do |app|
         
         tmp_download_location = "/tmp/fsm-wordpress.tar.gz"
 
-        s3_file tmp_download_location do
+        s3_file "#{tmp_download_location}" do
             bucket s3_bucket
             remote_path s3_key
             s3_url base_url
@@ -139,6 +139,7 @@ search("aws_opsworks_app").each do |app|
             creates "#{deploy_root}/wordpress"
             user deploy_user
             group deploy_group
+            action :extract_local
         end
     end
 
