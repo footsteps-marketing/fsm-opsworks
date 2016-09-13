@@ -8,10 +8,6 @@ require 'uri'
 require 'net/http'
 require 'net/https'
 
-package 'nginx' do
-    action :upgrade
-end
-
 le_master_instance = nil
 
 #
@@ -356,9 +352,12 @@ search("aws_opsworks_app").each do |app|
     end
 
 
-
     # Restart nginx for good measure
     service "nginx" do
         action :nothing
     end
+end
+
+package 'nginx' do
+    action :upgrade
 end
