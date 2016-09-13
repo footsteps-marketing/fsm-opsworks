@@ -17,6 +17,7 @@
     'jpegoptim',
     'imagemagick',
 ].each do |installPackage|
+    Chef::Log.info("**************** Installing Package #{installPackage}")
     package "#{installPackage}" do
         package_name installPackage
     end
