@@ -128,8 +128,8 @@ search("aws_opsworks_app").each do |app|
             s3_url base_url
             aws_access_key_id app[:app_source][:user]
             aws_secret_access_key app[:app_source][:password]
-            owner "root"
-            group "root"
+            user deploy_user
+            group deploy_group
             mode "0600"
             action :create
         end
