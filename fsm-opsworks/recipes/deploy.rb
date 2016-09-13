@@ -184,6 +184,14 @@ search("aws_opsworks_app").each do |app|
         )
     end
 
+    directory '/etc/nginx/sites-enabled' do
+        owner 'root'
+        group 'root'
+        mode '0755'
+        recursive true
+        action :create        
+    end
+
     # Clean up old linked confs...
     Dir.foreach('/etc/nginx/sites-enabled') do |item|
         next if item == '.' or item == '..'
