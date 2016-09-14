@@ -166,6 +166,20 @@ search("aws_opsworks_app").each do |app|
         )
     end
 
+    # Write out the wordpress multisite snippet
+    template "/etc/nginx/snippets/wordfence.conf" do
+        if command['type'] == 'deploy'
+            action :create
+        else
+            action :nothing
+            subscribes :create, 'package[nginx]', :immediately
+        end
+        source "wordfence.conf.erb"
+        mode 0644
+        owner "root"
+        group "root"
+    end
+
     
     # 
     # Write out nginx.conf stuff for our app
