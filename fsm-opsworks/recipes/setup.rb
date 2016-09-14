@@ -11,6 +11,7 @@
     'php-mysql',
     'php-mcrypt',
     'php-curl',
+    'php-apcu',
     'php7.0-xml',
     'php-mbstring',
     'pngquant',
