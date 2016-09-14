@@ -232,6 +232,7 @@ search("aws_opsworks_app").each do |app|
         to "/etc/nginx/sites-available/#{app['shortname']}.conf"
         if node[:letsencrypt][:get_certificates] == false
             notifies :restart, "service[nginx]", :delayed
+            notifies :restart, "service[php7.0-fpm]", :delayed
         end
     end
 
@@ -381,5 +382,9 @@ search("aws_opsworks_app").each do |app|
     # Restart nginx for good measure
     service "nginx" do
         action :nothing
+    end
+
+    service "php7.0-fpm" do
+        action :nothing        
     end
 end
