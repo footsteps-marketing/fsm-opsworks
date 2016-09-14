@@ -52,7 +52,7 @@ search("aws_opsworks_app").each do |app|
     # Clean up old linked confs...
     link "/etc/nginx/sites-enabled/default" do
         action :delete
-        notifies :restart, 'service[nginx]', :delayed
+        notifies :restart, 'service[nginx]', :immediately
         only_if "test -L '/etc/nginx/sites-enabled/default'"
     end
 

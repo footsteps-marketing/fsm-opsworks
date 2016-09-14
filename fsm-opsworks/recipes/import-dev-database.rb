@@ -32,9 +32,10 @@ EOF
     only_if { ::File.exists?(db_file) }
 end
 
-bash "install_wp_cli" do
+bash "run_wp_cli" do
     action :nothing
     subscribes :run, 'bash[import_database]', :delayed
+    subscribes :run, 'script[install_composer]', :delayed
     cwd "/vagrant/wordpress"
     user "vagrant"
     code <<-EOH
