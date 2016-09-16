@@ -24,11 +24,11 @@ define('FS_METHOD', 'direct');
 
 <%= @keys %>
 
-<% if node['wordpress']['memcached_servers']==true -%>
+<% if node['wordpress']['memcached_servers'] != false -%>
 $memcached_servers = <%= node[:wordpress][:memcached_servers]%>;
 <% end -%>
 
-<% if node['wordpress']['wp_cache_key_salt']==true -%>
+<% if node['wordpress']['wp_cache_key_salt'] != false -%>
 define('WP_CACHE_KEY_SALT', '<%= node[:wordpress][:wp_cache_key_salt]%>');
 <% end -%>
 
