@@ -14,6 +14,7 @@
     'php-apcu',
     'php7.0-xml',
     'php-mbstring',
+    'php-memcache',
     'pngquant',
     'jpegoptim',
     'imagemagick',
