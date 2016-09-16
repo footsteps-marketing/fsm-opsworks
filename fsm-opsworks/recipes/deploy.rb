@@ -147,6 +147,24 @@ search("aws_opsworks_app").each do |app|
     end
 
 
+    bash "update_php_ini" do
+        if command['type'] == 'deploy'
+            action :run
+        else
+            action :nothing
+            subscribes :run, 'package[php-fpm]', :immediately
+        end
+        user "root"
+        code <<-EOH
+            sed -i \
+                -e 's/^upload_max_filesize.*$/upload_max_filesize=#{node[:wordpress][:max_upload_size]}/g' \
+                -e 's/^post_max_size.*$/post_max_size=#{node[:wordpress][:max_upload_size]}/g' \
+                -e 's/^max_execution_time.*$/max_execution_time=#{node[:wordpress][:max_execution_time]}/g' \
+                /etc/php/7.0/fpm/php.ini
+            EOH
+    end
+
+
 
     # Write out the wordpress multisite snippet
     template "/etc/nginx/snippets/wordpress.conf" do
