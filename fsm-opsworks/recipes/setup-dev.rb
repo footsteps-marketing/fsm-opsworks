@@ -17,6 +17,7 @@ end
 [
     'php-xdebug',
     'npm',
+    'memcached',
     'subversion'
 ].each do |installPackage|
     package "#{installPackage}" do
@@ -35,6 +36,11 @@ template "/etc/php/7.0/cli/php.ini" do
     action :nothing
     subscribes :create, 'package[php-fpm]', :delayed
     source "etc/php/7.0/cli/php.ini.erb"
+end
+
+service "memcached" do
+    action :nothing
+    subscribes :start, 'package[memcached]', :delayed
 end
 
 service "php7.0-fpm" do
