@@ -24,11 +24,18 @@ define('FS_METHOD', 'direct');
 
 <%= @keys %>
 
+<% if node['wordpress']['memcached_servers']==true -%>
+$memcached_servers = <%= node[:wordpress][:memcached_servers]%>;
+<% end -%>
+
+<% if node['wordpress']['wp_cache_key_salt']==true -%>
+define('WP_CACHE_KEY_SALT', '<%= node[:wordpress][:wp_cache_key_salt]%>');
+<% end -%>
+
 <% if node['wordpress']['force_secure_logins']==true -%>
 define('FORCE_SSL_LOGIN', true);
 define('FORCE_SSL_ADMIN', true);
 <% end -%>
-
 
 <% if node['wordpress']['sunrise']==true -%>
 define( 'SUNRISE', 'on' );

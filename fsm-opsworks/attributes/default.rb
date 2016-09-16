@@ -30,6 +30,8 @@ default['wordpress']['max_upload_size'] = '32M'
 default['wordpress']['max_execution_time'] = '180'
 default['wordpress']['exclude_plugins'] = []
 default['wordpress']['exclude_themes'] = []
+default['wordpress']['memcached_servers'] = false
+default['wordpress']['wp_cache_key_salt'] = false
 
 default['letsencrypt']['get_certificates'] = false
 default['letsencrypt']['admin_email'] = ''
