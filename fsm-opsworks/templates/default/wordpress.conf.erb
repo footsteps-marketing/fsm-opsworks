@@ -1,6 +1,11 @@
-fastcgi_param PHP_VALUE "upload_max_filesize=<%= node[:wordpress][:max_upload_size]%>
-post_max_size=<%= node[:wordpress][:max_upload_size]%>
-max_execution_time=<%= node[:wordpress][:max_execution_time]%>";
+    client_max_body_size <%= node[:wordpress][:max_upload_size] %>;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_buffers 16 8k;
+    gzip_http_version 1.1;
+    gzip_min_length 256;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
 
 <% if node['wordpress']['wordfence'] == true -%>
     include snippets/wordfence.conf;
