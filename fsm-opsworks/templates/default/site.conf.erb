@@ -9,7 +9,7 @@ server {
     access_log <%= @logbase %>/<%= @app['shortname'] %>.access.log combined;
     error_log <%= @logbase %>/<%= @app['shortname'] %>.error.log warn;
 <% end -%>
-    client_max_body_size <%= node[:wordpress][:max_upload_size] %>
+    client_max_body_size <%= node[:wordpress][:max_upload_size] %>;
 
     root <%= @server_root %>/wordpress;
     index index.php;
