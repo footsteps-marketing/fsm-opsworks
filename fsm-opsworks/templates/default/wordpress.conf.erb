@@ -43,7 +43,7 @@
     }
 <% else -%>
     location / {
-        try_files $uri $uri/ /index.php?$args ;
+        try_files $uri $uri/ /index.php?$args;
     }
     
     location ~ .php$ {
@@ -63,6 +63,7 @@ location ~ /\.ht {
 location ~* \.(js|css|png|jpg|jpeg|gif|ico)$ {
     expires 24h;
     log_not_found off;
+    try_files $uri $uri/ /index.php?$args;
 }
 
 #avoid php readfile()
