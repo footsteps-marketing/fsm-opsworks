@@ -12,6 +12,8 @@
     'php-mcrypt',
     'php-curl',
     'php-apcu',
+    'php-gd',
+    'php-imagick',
     'php7.0-xml',
     'php-mbstring',
     'php-memcache',
