@@ -15,6 +15,7 @@ bash 'import_database' do
     # subscribes :run, 'mysql_service[default]', :immediately
     notifies :restart, 'service[nginx]', :delayed
     code <<-EOH
+        mysqldump --socket=/var/run/mysql-default/mysqld.sock -h "localhost" -u "#{db_user}" -p"#{db_password}" "#{db_name}" > old_db-$(date +%Y%m%d%H%M%S).sql
         echo "Emptying local database..."
         mysql --socket=/var/run/mysql-default/mysqld.sock -h "localhost" -u "#{db_user}" -p"#{db_password}" << EOF
         DROP DATABASE IF EXISTS #{db_name};
