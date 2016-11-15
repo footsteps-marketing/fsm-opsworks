@@ -14,7 +14,7 @@ search("aws_opsworks_app").first do |app|
     Domains.get app_root node[:wordpress][:multisite][:domain_current_site] do |domains|
         domains.each do |domain|
             template "/etc/nginx/sites-available/#{domain}.conf" do
-                source "site.conf.erb"
+                source "etc/nginx/sites-available/SITE.conf.erb"
                 mode 0644
                 owner "root"
                 group "root"

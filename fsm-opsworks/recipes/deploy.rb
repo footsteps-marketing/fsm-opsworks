@@ -4,6 +4,10 @@
 #
 # Copyright (c) 2016 FootSteps Marketing, All Rights Reserved.
 
+# Notes
+# - Template sources are all relative to this
+#   cookbook's `templates/default` directory
+
 require 'uri'
 require 'net/http'
 require 'net/https'
@@ -174,7 +178,7 @@ search("aws_opsworks_app").each do |app|
             action :nothing
             subscribes :create, 'package[nginx]', :immediately
         end
-        source "wordpress.conf.erb"
+        source "etc/nginx/snippets/wordpress.conf.erb"
         mode 0644
         owner "root"
         group "root"
@@ -184,7 +188,7 @@ search("aws_opsworks_app").each do |app|
         )
     end
 
-    # Write out the wordpress multisite snippet
+    # Write out the wordfence snippet
     template "/etc/nginx/snippets/wordfence.conf" do
         if command['type'] == 'deploy'
             action :create
@@ -192,7 +196,7 @@ search("aws_opsworks_app").each do |app|
             action :nothing
             subscribes :create, 'package[nginx]', :immediately
         end
-        source "wordfence.conf.erb"
+        source "etc/nginx/snippets/wordfence.conf.erb"
         mode 0644
         owner "root"
         group "root"
@@ -209,7 +213,7 @@ search("aws_opsworks_app").each do |app|
             action :nothing
             subscribes :create, 'package[nginx]', :immediately
         end
-        source "site.conf.erb"
+        source "etc/nginx/sites-available/SITE.conf.erb"
         mode 0644
         owner "root"
         group "root"
@@ -222,7 +226,7 @@ search("aws_opsworks_app").each do |app|
         )
     end
 
-    # Clean up old linked confs...
+    # Wipe out old sites-enabled symlinks (really just delete the folder and recreated it)
     directory 'delete_sites_enabled' do
         recursive true
         path '/etc/nginx/sites-enabled'
@@ -234,6 +238,7 @@ search("aws_opsworks_app").each do |app|
         end
     end
 
+    # Create the folder for new sites-enabled symlinks
     directory 'create_sites_enabled' do
         action :nothing
         path '/etc/nginx/sites-enabled'
@@ -243,7 +248,7 @@ search("aws_opsworks_app").each do |app|
         subscribes :create, 'directory[delete_sites_enabled]', :immediately
     end
 
-    # Link the new confs...
+    # Create the app's symlink
     link "/etc/nginx/sites-enabled/#{app['shortname']}.conf" do
         action :nothing
         subscribes :create, 'directory[create_sites_enabled]', :immediately
@@ -261,7 +266,7 @@ search("aws_opsworks_app").each do |app|
 #         domains.each do |domain|
 #             Chef::log.info("***** Mapping Domain: #{domain}")
 #             template "/etc/nginx/sites-available/#{domain}.conf" do
-#                 source "site.conf.erb"
+#                 source "etc/nginx/sites-available/SITE.conf.erb"
 #                 mode 0644
 #                 owner "root"
 #                 group "root"
@@ -320,7 +325,7 @@ search("aws_opsworks_app").each do |app|
     # Write out wp-config.php
     template "#{deploy_root}/wordpress/wp-config.php" do
         action :nothing
-        source "wp-config.php.erb"
+        source "srv/www/APPNAME/RELEASENAME/wp-config.php.erb"
         mode 0660
         owner deploy_user
         group deploy_group
@@ -339,14 +344,14 @@ search("aws_opsworks_app").each do |app|
     template "#{deploy_root}/get-mapped-domains.php" do
         action :nothing
         subscribes :create, "template[#{deploy_root}/wordpress/wp-config.php]", :immediately
-        source "get-mapped-domains.php.erb"
+        source "srv/www/APPNAME/RELEASENAME/get-mapped-domains.php.erb"
         mode 0700
         group "root"
         owner "root"
     end
 
 
-    # Clean up any excluded plugins
+    # Clean up any excluded plugins and themes
     exclude_plugins = node['wordpress']['exclude_plugins']
     exclude_themes = node['wordpress']['exclude_themes']
 

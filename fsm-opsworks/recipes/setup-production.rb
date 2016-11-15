@@ -9,9 +9,7 @@
 # 
 bash "handle_kswapd0_bug" do
     user "root"
-    code <<-EOH
-        touch /etc/udev/rules.d/40-vm-hotadd.rules
-        EOH
+    code "touch /etc/udev/rules.d/40-vm-hotadd.rules"
     notifies :request_reboot, 'reboot[required]', :delayed
 end
 

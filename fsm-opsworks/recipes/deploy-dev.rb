@@ -19,7 +19,7 @@ search("aws_opsworks_app").each do |app|
         action :nothing
         subscribes :create, 'package[nginx]', :immediately
         notifies :restart, 'service[nginx]', :delayed
-        source "wordpress.conf.erb"
+        source "etc/nginx/snippets/wordpress.conf.erb"
         mode 0644
         owner "root"
         group "root"
@@ -36,7 +36,7 @@ search("aws_opsworks_app").each do |app|
     template "/etc/nginx/sites-available/#{app['shortname']}.conf" do
         action :nothing
         subscribes :create, 'package[nginx]', :immediately
-        source "site.conf.erb"
+        source "etc/nginx/sites-available/SITE.conf.erb"
         mode 0644
         owner "root"
         group "root"
@@ -86,7 +86,7 @@ search("aws_opsworks_app").each do |app|
 
     # Write out wp-config.php
     template "#{deploy_root}/wordpress/wp-config.php" do
-        source "wp-config.php.erb"
+        source "srv/www/APPNAME/RELEASETIME/wp-config.php.erb" # folder structure reflects production environment -- doesn't match up here. Sorry.
         
         variables(
             :database   => (db_name rescue nil),
