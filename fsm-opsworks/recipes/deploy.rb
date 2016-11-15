@@ -325,7 +325,7 @@ search("aws_opsworks_app").each do |app|
     # Write out wp-config.php
     template "#{deploy_root}/wordpress/wp-config.php" do
         action :nothing
-        source "srv/www/APPNAME/RELEASENAME/wp-config.php.erb"
+        source "srv/www/APPNAME/RELEASETIME/wp-config.php.erb"
         mode 0660
         owner deploy_user
         group deploy_group
@@ -344,7 +344,7 @@ search("aws_opsworks_app").each do |app|
     template "#{deploy_root}/get-mapped-domains.php" do
         action :nothing
         subscribes :create, "template[#{deploy_root}/wordpress/wp-config.php]", :immediately
-        source "srv/www/APPNAME/RELEASENAME/get-mapped-domains.php.erb"
+        source "srv/www/APPNAME/RELEASETIME/get-mapped-domains.php.erb"
         mode 0700
         group "root"
         owner "root"
