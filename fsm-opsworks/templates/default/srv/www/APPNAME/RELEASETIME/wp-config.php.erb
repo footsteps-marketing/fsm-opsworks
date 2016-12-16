@@ -32,6 +32,10 @@ $memcached_servers = <%= node[:wordpress][:memcached_servers]%>;
 define('WP_CACHE_KEY_SALT', '<%= node[:wordpress][:wp_cache_key_salt]%>');
 <% end -%>
 
+<% if node['wordpress']['batcache'] != false and node['wordpress']['wp_cache_key_salt'] != false -%>
+define('WP_CACHE', true);
+<% end -%>
+
 <% if node['wordpress']['force_secure_logins']==true -%>
 define('FORCE_SSL_LOGIN', true);
 define('FORCE_SSL_ADMIN', true);
