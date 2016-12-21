@@ -8,32 +8,33 @@ state_file = /var/awslogs/state/agent-state
 
 [<%= @stack[:name] %>-syslog]
 datetime_format = %b %d %H:%M:%S
-log_group_name = syslog
-log_stream_name = <%= @stack[:name].gsub(' ','_') %>-<%= @instance[:hostname] %>
+log_group_name = fsm-wordpress/syslog
+log_stream_name = <%= @stack[:name] %> - <%= @instance[:hostname] %>
 file = /var/log/syslog
+
+[<%= @stack[:name] %>-auth.log]
+datetime_format = %b %d %H:%M:%S
+log_group_name = fsm-wordpress/auth.log
+log_stream_name = <%= @stack[:name] %> - <%= @instance[:hostname] %>
+file = /var/log/auth.log
 
 [php7.0-fpm.log]
 file = /var/log/php7.0-fpm.log
-log_group_name = php7.0-fpm.log
-log_stream_name = <%= @stack[:name].gsub(' ','_') %>-<%= @instance[:hostname] %>
+log_group_name = fsm-wordpress/php7.0-fpm.log
+log_stream_name = <%= @stack[:name] %> - <%= @instance[:hostname] %>
 datetime_format = %b %d %H:%M:%S
 
 <% @apps.each do |app| %>
 [<%= app[:shortname] %>.access.log]
 file = /var/log/nginx/<%= app[:shortname] %>.access.log
-log_group_name = <%= app[:shortname] %>.access.log
-log_stream_name = <%= @stack[:name].gsub(' ','_') %>-<%= @instance[:hostname] %>
+log_group_name = fsm-wordpress/nginx/access.log
+log_stream_name = <%= @stack[:name] %> - <%= @instance[:hostname] %>
 datetime_format = %b %d %H:%M:%S
 
 [<%= app[:shortname] %>.error.log]
 file = /var/log/nginx/<%= app[:shortname] %>.error.log
-log_group_name = <%= app[:shortname] %>.error.log
-log_stream_name = <%= @stack[:name].gsub(' ','_') %>-<%= @instance[:hostname] %>
+log_group_name = fsm-wordpress/nginx/error.log
+log_stream_name = <%= @stack[:name] %> - <%= @instance[:hostname] %>
 datetime_format = %b %d %H:%M:%S
 <% end %>
 
-[<%= @stack[:name] %>-cwlogs]
-datetime_format = %b %d %H:%M:%S
-log_group_name = cwlogs
-log_stream_name = <%= @stack[:name].gsub(' ','_') %>-<%= @instance[:hostname] %>
-file = <%= node[:cwlogs][:logfile] %>
