@@ -13,6 +13,6 @@ template "/tmp/cwlogs.cfg" do
     :logbase => '/var/log/nginx',
     :apps => (search("aws_opsworks_app") rescue nil),
     :stack => (search("aws_opsworks_stack").first rescue nil),
-    :instance => (search("aws_opsworks_instance").first rescue nil),
+    :instance => (search("aws_opsworks_instance", "self:true").first rescue nil),
   )
 end
