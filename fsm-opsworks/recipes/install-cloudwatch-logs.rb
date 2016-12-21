@@ -15,6 +15,8 @@ end
  
 execute "install_cflogs_agent" do
   command "/tmp/awslogs-agent-setup.py -n -r #{node[:cwlogs][:region]} -c /tmp/cwlogs.cfg"
+  retries 3
+  retry_delay 3
   notifies :enable, 'service[awslogs]', :immediately
   notifies :restart, 'service[awslogs]', :immediately
 end
