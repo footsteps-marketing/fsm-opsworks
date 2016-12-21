@@ -29,12 +29,12 @@ log_stream_name = <%= @stack[:name] %> - <%= @instance[:hostname] %>
 file = /var/log/nginx/<%= app[:shortname] %>.access.log
 datetime_format = %b %d %H:%M:%S
 log_group_name = fsm-wordpress/nginx/access.log
-log_stream_name = <%= @stack[:name] %> - <%= @instance[:hostname] %>
+log_stream_name = <%= @stack[:name] %>
 
 [<%= app[:shortname] %>.error.log]
 file = /var/log/nginx/<%= app[:shortname] %>.error.log
 datetime_format = %b %d %H:%M:%S
 log_group_name = fsm-wordpress/nginx/error.log
-log_stream_name = <%= @stack[:name] %> - <%= @instance[:hostname] %>
+log_stream_name = <%= @stack[:name] %>
 <% end %>
 
