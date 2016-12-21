@@ -14,9 +14,9 @@ remote_file "/opt/aws/cloudwatch/awslogs-agent-setup.py" do
 end
  
 execute "install_cflogs_agent" do
-  action :nothing
+  # action :nothing
   command "/opt/aws/cloudwatch/awslogs-agent-setup.py -n -r #{node[:cwlogs][:region]} -c /tmp/cwlogs.cfg"
-  subscribes :run, 'remote_file[/opt/aws/cloudwatch/awslogs-agent-setup.py]', :immediately
+  # subscribes :run, 'remote_file[/opt/aws/cloudwatch/awslogs-agent-setup.py]', :immediately
   notifies :write, 'log[install_cflogs_agent]', :immediately
   not_if { system "pgrep -f aws-logs-agent-setup" }
 end
