@@ -8,26 +8,26 @@ state_file = /var/awslogs/state/agent-state
 
 [nginx.log]
 file = /var/log/nginx.log
-log_group_name = nginx.log
+log_group_name = <%= @stack[:name].gsub(' ','_') %>-nginx.log
 log_stream_name = {instance_id}
 datetime_format = %b %d %H:%M:%S
 
 [php7.0-fpm.log]
 file = /var/log/php7.0-fpm.log
-log_group_name = php7.0-fpm.log
+log_group_name = <%= @stack[:name].gsub(' ','_') %>-php7.0-fpm.log
 log_stream_name = {instance_id}
 datetime_format = %b %d %H:%M:%S
 
 <% @apps.each do |app| %>
 [<%= app[:shortname] %>.access.log]
 file = /var/log/nginx/<%= @app[:shortname] %>.access.log
-log_group_name = <%= @app[:shortname] %>.access.log
+log_group_name = <%= @stack[:name].gsub(' ','_') %>-<%= @app[:shortname] %>.access.log
 log_stream_name = {instance_id}
 datetime_format = %b %d %H:%M:%S
 
 [<%= app[:shortname] %>.error.log]
 file = /var/log/nginx/<%= @app[:shortname] %>.error.log
-log_group_name = <%= @app[:shortname] %>.error.log
+log_group_name = <%= @stack[:name].gsub(' ','_') %>-<%= @app[:shortname] %>.error.log
 log_stream_name = {instance_id}
 datetime_format = %b %d %H:%M:%S
 <% end %>
