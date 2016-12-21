@@ -32,7 +32,7 @@ log_stream_name = <%= @stack[:name].gsub(' ','_') %>-<%= @instance[:hostname] %>
 datetime_format = %b %d %H:%M:%S
 <% end %>
 
-[<%= @stack[:name]-cwlogs %>]
+[<%= @stack[:name] %>-cwlogs]
 datetime_format = %b %d %H:%M:%S
 log_group_name = <%= @stack[:name].gsub(' ','_') %>-cwlogs
 log_stream_name = <%= @instance[:hostname] %>
