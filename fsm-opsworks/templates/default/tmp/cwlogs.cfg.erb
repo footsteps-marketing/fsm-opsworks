@@ -20,14 +20,14 @@ datetime_format = %b %d %H:%M:%S
 
 <% @apps.each do |app| %>
 [<%= app[:shortname] %>.access.log]
-file = /var/log/nginx/<%= @app[:shortname] %>.access.log
-log_group_name = <%= @stack[:name].gsub(' ','_') %>-<%= @app[:shortname] %>.access.log
+file = /var/log/nginx/<%= app[:shortname] %>.access.log
+log_group_name = <%= @stack[:name].gsub(' ','_') %>-<%= app[:shortname] %>.access.log
 log_stream_name = {instance_id}
 datetime_format = %b %d %H:%M:%S
 
 [<%= app[:shortname] %>.error.log]
-file = /var/log/nginx/<%= @app[:shortname] %>.error.log
-log_group_name = <%= @stack[:name].gsub(' ','_') %>-<%= @app[:shortname] %>.error.log
+file = /var/log/nginx/<%= app[:shortname] %>.error.log
+log_group_name = <%= @stack[:name].gsub(' ','_') %>-<%= app[:shortname] %>.error.log
 log_stream_name = {instance_id}
 datetime_format = %b %d %H:%M:%S
 <% end %>
