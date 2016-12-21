@@ -6,11 +6,9 @@
 
 directory "/opt/aws/cloudwatch" do
   recursive true
-  notifies :create, 'remote_file[/opt/aws/cloudwatch/awslogs-agent-setup.py]', :immediately
 end
 
 remote_file "/opt/aws/cloudwatch/awslogs-agent-setup.py" do
-  action :nothing
   source "https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py"
   notifies :run, 'execute[Install CloudWatch Logs agent]', :immediately
   mode "0755"
