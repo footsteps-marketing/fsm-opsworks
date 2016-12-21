@@ -6,8 +6,8 @@ state_file = /var/awslogs/state/agent-state
 ## Each log file is defined in its own section. The section name doesn't
 ## matter as long as its unique within this file.
 
-[<%= @stack[:name]-syslog %>]
-datetime_format = [%Y-%m-%d %H:%M:%S]
+[<%= @stack[:name] %>-syslog]
+datetime_format = %b %d %H:%M:%S
 log_group_name = syslog
 log_stream_name = <%= @stack[:name].gsub(' ','_') %>-<%= @instance[:hostname] %>
 file = /var/log/syslog
@@ -33,7 +33,7 @@ datetime_format = %b %d %H:%M:%S
 <% end %>
 
 [<%= @stack[:name]-cwlogs %>]
-datetime_format = [%Y-%m-%d %H:%M:%S]
+datetime_format = %b %d %H:%M:%S
 log_group_name = <%= @stack[:name].gsub(' ','_') %>-cwlogs
 log_stream_name = <%= @instance[:hostname] %>
 file = <%= node[:cwlogs][:logfile] %>
