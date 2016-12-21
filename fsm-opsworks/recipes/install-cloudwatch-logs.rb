@@ -18,8 +18,8 @@ execute "install_cflogs_agent" do
   command "/opt/aws/cloudwatch/awslogs-agent-setup.py -n -r #{node[:cwlogs][:region]} -c /tmp/cwlogs.cfg"
   action :nothing
   subscribes :run, 'remote_file[download_cflogs_agent]', :immediately
-  notify :enable, 'service[awslogs]', :immediately
-  notify :restart, 'service[awslogs]', :immediately
+  notifies :enable, 'service[awslogs]', :immediately
+  notifies :restart, 'service[awslogs]', :immediately
 end
 
 service "awslogs" do 
