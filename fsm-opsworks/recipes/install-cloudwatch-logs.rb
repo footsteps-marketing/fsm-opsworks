@@ -4,6 +4,10 @@
 #
 # Copyright (c) 2016 FootSteps Marketing, All Rights Reserved.
 
+package "python" do
+    action :install
+end
+
 directory "/opt/aws/cloudwatch" do
   recursive true
 end
