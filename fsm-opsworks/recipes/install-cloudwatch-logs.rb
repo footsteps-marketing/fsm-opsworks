@@ -30,10 +30,12 @@ end
 
 log "install_cflogs_agent" do
     action :nothing
-    message "execute[install_cflogs_agent] happened"
+    level :info
+    message "********** execute[install_cflogs_agent] happened"
 end
 
 log "start_cflogs_agent" do
     action :nothing
-    message "execute[start_cflogs_agent] happened"
+    level :info
+    message "********** execute[start_cflogs_agent] happened"
 end
