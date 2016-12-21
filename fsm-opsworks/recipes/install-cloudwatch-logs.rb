@@ -8,16 +8,13 @@ directory "/opt/aws/cloudwatch" do
   recursive true
 end
 
-remote_file "download_cflogs_agent" do
+remote_file "/tmp/awslogs-agent-setup.py" do
   source "https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py"
-  path "/opt/aws/cloudwatch/awslogs-agent-setup.py"
   mode "0755"
 end
  
 execute "install_cflogs_agent" do
-  command "/opt/aws/cloudwatch/awslogs-agent-setup.py -n -r #{node[:cwlogs][:region]} -c /tmp/cwlogs.cfg"
-  action :nothing
-  subscribes :run, 'remote_file[download_cflogs_agent]', :immediately
+  command "/tmp/awslogs-agent-setup.py -n -r #{node[:cwlogs][:region]} -c /tmp/cwlogs.cfg"
   notifies :enable, 'service[awslogs]', :immediately
   notifies :restart, 'service[awslogs]', :immediately
 end
