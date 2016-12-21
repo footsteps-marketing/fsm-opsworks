@@ -15,5 +15,11 @@ end
  
 execute "Install CloudWatch Logs agent" do
   command "/opt/aws/cloudwatch/awslogs-agent-setup.py -n -r #{node[:cwlogs][:region]} -c /tmp/cwlogs.cfg"
+  notifies :run, 'execute[Start CloudWatch Logs agent]', :immediately
   not_if { system "pgrep -f aws-logs-agent-setup" }
+end
+
+execute "Start CloudWatch Logs agent" do
+  action :nothing
+  command "systemctl enable awslogs; systemctl restart awslogs"
 end

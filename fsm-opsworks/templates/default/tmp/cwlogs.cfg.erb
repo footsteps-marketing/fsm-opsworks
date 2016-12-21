@@ -6,29 +6,23 @@ state_file = /var/awslogs/state/agent-state
 ## Each log file is defined in its own section. The section name doesn't
 ## matter as long as its unique within this file.
 
-[nginx.log]
-file = /var/log/nginx.log
-log_group_name = <%= @stack[:name].gsub(' ','_') %>-nginx.log
-log_stream_name = {instance_id}
-datetime_format = %b %d %H:%M:%S
-
 [php7.0-fpm.log]
 file = /var/log/php7.0-fpm.log
 log_group_name = <%= @stack[:name].gsub(' ','_') %>-php7.0-fpm.log
-log_stream_name = {instance_id}
+log_stream_name = <%= @instance[:hostname] %>
 datetime_format = %b %d %H:%M:%S
 
 <% @apps.each do |app| %>
 [<%= app[:shortname] %>.access.log]
 file = /var/log/nginx/<%= app[:shortname] %>.access.log
 log_group_name = <%= @stack[:name].gsub(' ','_') %>-<%= app[:shortname] %>.access.log
-log_stream_name = {instance_id}
+log_stream_name = <%= @instance[:hostname] %>
 datetime_format = %b %d %H:%M:%S
 
 [<%= app[:shortname] %>.error.log]
 file = /var/log/nginx/<%= app[:shortname] %>.error.log
 log_group_name = <%= @stack[:name].gsub(' ','_') %>-<%= app[:shortname] %>.error.log
-log_stream_name = {instance_id}
+log_stream_name = <%= @instance[:hostname] %>
 datetime_format = %b %d %H:%M:%S
 <% end %>
 
