@@ -25,6 +25,7 @@ default['wordpress']['multisite']['subdomain_install'] = false
 default['wordpress']['multisite']['domain_current_site'] = false
 default['wordpress']['multisite']['default_site'] = 1
 default['wordpress']['salt'] = false
+default['wordpress']['batcache'] = false
 default['wordpress']['wordfence'] = false
 default['wordpress']['max_upload_size'] = '32M'
 default['wordpress']['max_execution_time'] = '180'
