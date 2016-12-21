@@ -38,3 +38,4 @@ default['letsencrypt']['get_certificates'] = false
 default['letsencrypt']['admin_email'] = ''
 
 default[:cwlogs][:logfile] = '/var/log/aws/opsworks/opsworks-agent.statistics.log'
+default[:cwlogs][:region] = 'us-west-2'
