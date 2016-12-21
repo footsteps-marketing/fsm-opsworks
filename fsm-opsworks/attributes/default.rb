@@ -36,3 +36,5 @@ default['wordpress']['wp_cache_key_salt'] = false
 
 default['letsencrypt']['get_certificates'] = false
 default['letsencrypt']['admin_email'] = ''
+
+default[:cwlogs][:logfile] = '/var/log/aws/opsworks/opsworks-agent.statistics.log'
