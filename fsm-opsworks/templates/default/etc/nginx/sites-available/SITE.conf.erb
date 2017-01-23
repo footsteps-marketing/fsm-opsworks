@@ -10,6 +10,10 @@ server {
     error_log <%= @logbase %>/<%= @app['shortname'] %>.error.log warn;
 <% end -%>
 
+    if ($http_user_agent ~ (Firefox/40.1)) {
+        return 403;
+    }
+
     root <%= @server_root %>/wordpress;
     index index.php;
     include snippets/wordpress.conf;
