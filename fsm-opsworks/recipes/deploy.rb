@@ -169,6 +169,20 @@ search("aws_opsworks_app").each do |app|
     end
 
 
+    # Write out the php-fpm pool conf
+    template "/etc/php/7.0/fpm/pool.d/www.conf" do
+        if command['type'] == 'deploy'
+            action :create
+        else
+            action :nothing
+            subscribes :create, 'package[php-fpm]', :immediately
+        end
+        source "etc/php/7.0/fpm/pool.d/www.conf"
+        mode 0644
+        owner "root"
+        group "root"
+    end
+
 
     # Write out the wordpress multisite snippet
     template "/etc/nginx/snippets/wordpress.conf" do
