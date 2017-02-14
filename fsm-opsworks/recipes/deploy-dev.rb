@@ -13,6 +13,16 @@ search("aws_opsworks_app").each do |app|
     deploy_group = 'www-data'
     deploy_root = "/vagrant/"
     server_root = deploy_root
+    
+    # Write out the php-fpm pool conf
+    template "/etc/php/7.0/fpm/pool.d/www.conf" do
+        action :nothing
+        subscribes :create, 'package[php-fpm]', :immediately
+        source "etc/php/7.0/fpm/pool.d/www.conf"
+        mode 0644
+        owner "root"
+        group "root"
+    end
 
     # Write out the wordpress multisite snippet
     template "/etc/nginx/snippets/wordpress.conf" do
