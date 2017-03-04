@@ -8,9 +8,14 @@ if ( !isset($wp_did_header) ) {
     require_once( dirname(__FILE__) . '/wp-load.php' );
 }
 
-$rows = $wpdb->get_results( "SELECT * FROM {$wpdb->dmtable} ORDER BY id DESC LIMIT 0,20" );
+$rows = $wpdb->get_results( "SELECT * FROM {$wpdb->dmtable} ORDER BY id DESC" );
+
 foreach ($rows as $row) {
-    echo "{$row->domain}\n";
+    $domain = $row->domain;
+    if (substr($domain, 0, 4) == 'www.') {
+      $domain = substr($domain, 4);
+    }
+    echo "{$domain}\n";
 }
 
 die();
