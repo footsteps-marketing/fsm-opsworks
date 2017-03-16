@@ -340,30 +340,29 @@ search("aws_opsworks_app").each do |app|
     ruby_block 'map_domains' do
         block do
             Chef::Log.info("**************** MAPPING DOMAINS")
-            Domains.get(deploy_root, node[:wordpress][:multisite][:domain_current_site]) do |domains|
-                Chef::Log.info("**************** DOMAINS: #{domains.join(',')}")
-                domains.each do |domain|
-                    Chef::Log.info("***** Mapping Domain: #{domain}")
-                    template "/etc/nginx/sites-available/#{domain}.conf" do
-                        source "etc/nginx/sites-available/SITE.conf.erb"
-                        mode 0644
-                        owner "root"
-                        group "root"
+            domains = Domains.get(deploy_root, node[:wordpress][:multisite][:domain_current_site])
+            Chef::Log.info("**************** DOMAINS: #{domains.join(',')}")
+            domains.each do |domain|
+                Chef::Log.info("***** Mapping Domain: #{domain}")
+                template "/etc/nginx/sites-available/#{domain}.conf" do
+                    source "etc/nginx/sites-available/SITE.conf.erb"
+                    mode 0644
+                    owner "root"
+                    group "root"
 
-                        variables(
-                            :server_root => server_root,
-                            :logbase => '/var/log/nginx',
-                            :app => (app rescue nil),
-                            :url => (domain rescue nil),
-                            :ssl => node[:letsencrypt][:get_certificates]
-                        )
-                    end
+                    variables(
+                        :server_root => server_root,
+                        :logbase => '/var/log/nginx',
+                        :app => (app rescue nil),
+                        :url => (domain rescue nil),
+                        :ssl => node[:letsencrypt][:get_certificates]
+                    )
+                end
 
-                    link "/etc/nginx/sites-enabled/#{domain}.conf" do
-                        to "/etc/nginx/sites-available/#{domain}.conf"
-                        if node[:letsencrypt][:get_certificates] == false
-                            notifies :restart, "service[nginx]", :delayed
-                        end
+                link "/etc/nginx/sites-enabled/#{domain}.conf" do
+                    to "/etc/nginx/sites-available/#{domain}.conf"
+                    if node[:letsencrypt][:get_certificates] == false
+                        notifies :restart, "service[nginx]", :delayed
                     end
                 end
             end
