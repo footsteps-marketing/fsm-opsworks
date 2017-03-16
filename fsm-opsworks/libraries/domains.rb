@@ -4,7 +4,7 @@ module Domains
     end
     
     def self.get(app_root, app_domain)
-        shell = Domains.ShellOut.new
+        shell = Domains::ShellOut.new
         command = "php #{app_root}/get-mapped-domains.php"
         result = shell.shell_out(command)
         
