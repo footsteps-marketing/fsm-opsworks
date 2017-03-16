@@ -1,5 +1,5 @@
 module Domains
-    class Domains.ShellOut
+    class ShellOut
         include Chef::Mixin::ShellOut
     end
     
