@@ -1,10 +1,6 @@
 module Domains
-    class ShellOut
-        include Chef::Mixin::ShellOut
-    end
-    
     def self.get(app_root, app_domain)
-        shell = Domains::ShellOut.new
+        shell = Chef::ShellOut.new(:user => 'root')
         command = "php #{app_root}/get-mapped-domains.php"
         result = shell.shell_out(command)
         
