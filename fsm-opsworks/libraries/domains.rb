@@ -1,7 +1,12 @@
 module Domains
+    class Domains.ShellOut
+        include Chef::Mixin::ShellOut
+    end
+    
     def self.get(app_root, app_domain)
+        shell = Domains.ShellOut.new
         command = "php #{app_root}/get-mapped-domains.php"
-        result = Chef::Mixin::ShellOut.shell_out(command)
+        result = shell.shell_out(command)
         
         Chef::Log.info("**************** DOMAINS RESULT: #{result.stdout}")
         Chef::Log.info("**************** DOMAINS ERROR:  #{result.stderr}")
