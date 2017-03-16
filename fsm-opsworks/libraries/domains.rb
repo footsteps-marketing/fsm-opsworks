@@ -1,6 +1,4 @@
-module Domains
-    include Chef::Recipe
-
+class Chef::Recipe::Domains
     def self.get(app_root, app_domain)
         domains = Array.new
         ruby_block "check_curl_command_output" do
