@@ -1,9 +1,13 @@
-class Chef::Recipe::Domains
+module Domains
     include Chef::Mixin::ShellOut
     
-    def self.get(app_root, app_domain)
+    def get(app_root, app_domain)
         command = "php #{app_root}/get-mapped-domains.php"
-        domains = self.shell_out(command).stdout.split("\n")
+        result = self.shell_out(command)
+        
+        Chef::Log.info("**************** DOMAINS RESULT: #{result.stdout}")
+        Chef::Log.info("**************** DOMAINS ERROR:  #{result.stderr}")
+        domains = result.stdout.split("\n")
         domains.unshift("#{app_domain}")
 
         return domains
