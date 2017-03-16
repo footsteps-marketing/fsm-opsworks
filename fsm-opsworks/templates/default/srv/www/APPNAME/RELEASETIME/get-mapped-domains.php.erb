@@ -1,6 +1,8 @@
 <?php 
 $_SERVER['HTTP_HOST'] = '<%= node[:wordpress][:multisite][:domain_current_site] %>';
 
+echo "**********FOOOOOOOOOO**********";
+
 if ( !isset($wp_did_header) ) {
 
     $wp_did_header = true;
