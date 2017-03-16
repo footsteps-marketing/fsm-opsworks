@@ -1,5 +1,6 @@
 <?php 
 $_SERVER['HTTP_HOST'] = '<%= node[:wordpress][:multisite][:domain_current_site] %>';
+$_SERVER['REQUEST_METHOD'] = 'GET';
 
 if ( !isset($wp_did_header) ) {
 
