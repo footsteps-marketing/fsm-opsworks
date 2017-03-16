@@ -4,8 +4,6 @@ module Domains
         shell = Mixlib::ShellOut.new(command, :user => 'root')
         result = shell.run_command
         
-        Chef::Log.info("**************** DOMAINS RESULT: #{shell.stdout}")
-        Chef::Log.info("**************** DOMAINS ERROR:  #{shell.stderr}")
         domains = shell.stdout.split("\n")
         domains.unshift("#{app_domain}")
 

@@ -341,6 +341,7 @@ search("aws_opsworks_app").each do |app|
         block do
             Chef::Log.info("**************** MAPPING DOMAINS")
             Domains.get(deploy_root, node[:wordpress][:multisite][:domain_current_site]) do |domains|
+                Chef::Log.info("**************** DOMAINS: #{domains.join(',')}")
                 domains.each do |domain|
                     Chef::Log.info("***** Mapping Domain: #{domain}")
                     template "/etc/nginx/sites-available/#{domain}.conf" do
