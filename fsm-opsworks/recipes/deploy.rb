@@ -239,6 +239,20 @@ search("aws_opsworks_app").each do |app|
             :ssl => node[:letsencrypt][:get_certificates]
         )
     end
+    
+    template "/etc/nginx/nginx.conf" do
+      if command['type'] == 'deploy'
+        action :create
+      else
+        action :nothing
+        subscribes :create, 'package[nginx]', :immediately
+      end
+      
+      source "etc/nginx/nginx.conf.erb"
+      mode 0644
+      owner "root"
+      group "root"
+    end
 
     # Wipe out old sites-enabled symlinks (really just delete the folder and recreated it)
     directory 'delete_sites_enabled' do
