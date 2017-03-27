@@ -67,6 +67,10 @@ describe FSM::WordPress::App do
     end
   end
   
+  describe '.revision' do
+    
+  end
+  
   describe '.on_deploy' do
     context 'when the app exists and is being deployed' do
       it 'yields to the block with the correct app info' do
