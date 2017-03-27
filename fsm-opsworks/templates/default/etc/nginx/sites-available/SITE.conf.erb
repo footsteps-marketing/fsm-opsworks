@@ -2,11 +2,11 @@ server {
 <% if defined?(@url) -%>
     listen 80;
     server_name <%= @url %>;
-    access_log <%= @logbase %>/<%= @url %>.access.log combined;
+    access_log <%= @logbase %>/<%= @url %>.access.log main;
     error_log <%= @logbase %>/<%= @url %>.error.log warn;
 <% else -%>
     listen 80 default_server;
-    access_log <%= @logbase %>/<%= @app['shortname'] %>.access.log combined;
+    access_log <%= @logbase %>/<%= @app['shortname'] %>.access.log main;
     error_log <%= @logbase %>/<%= @app['shortname'] %>.error.log warn;
 <% end -%>
 
@@ -29,7 +29,7 @@ server {
 server {
     listen 443;
     server_name <%= @url %>;
-    access_log <%= @logbase %>/<%= @url %>.ssl.access.log combined;
+    access_log <%= @logbase %>/<%= @url %>.ssl.access.log main;
     error_log <%= @logbase %>/<%= @url %>.ssl.error.log warn;
     ssl_certificate /home/stephen/getssl/<%= @url %>_fullchain.pem;
     ssl_certificate_key /home/stephen/getssl/<%= @url %>_privkey.pem;
