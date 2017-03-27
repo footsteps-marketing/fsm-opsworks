@@ -48,6 +48,7 @@ search("aws_opsworks_app").each do |app|
     revision_root = "/srv/www/#{app['shortname']}"
     deploy_root = "/srv/www/#{app['shortname']}/#{current_revision}"
     server_root = "/srv/www/#{app['shortname']}/current"
+    Chef::Log.info("**************** TIMESTAMP: #{command['sent_at']}")
     Chef::Log.info("**************** Deploying #{app['shortname']} to #{deploy_root}")
 
     
