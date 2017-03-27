@@ -13,7 +13,7 @@ module FSM
       
       # Get the correct data source information from the app
       def self.data_source
-        @data_source ||= self.info[:data_sources].find do |src|
+        @data_source ||= self.info[:data_sources]&.find do |src|
           (src[:type] == 'RdsDbInstance') and (src[:name].end_with? '_env')
         end
       end

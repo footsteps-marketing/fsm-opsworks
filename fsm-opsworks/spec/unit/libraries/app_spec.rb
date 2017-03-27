@@ -48,14 +48,35 @@ describe FSM::WordPress::App do
   end
   
   describe '.data_source' do
-    context 'when a *_env RDS database is configured on the OpsWorks app' do
-      it 'returns the correct database info' do
-        expect(app).to receive(:info).and_return(correct_app.merge({
-          data_sources: [ incorrect_data_source, correct_data_source ]
-        }))
-        expect(app.data_source).to match correct_data_source
+    context 'when the OpsWorks app has' do
+      context 'no configured data sources' do
+        it 'returns nil' do
+          expect(app).to receive(:info).and_return(correct_app.merge({
+            data_sources: []
+          }))
+          expect(app.data_source).to be_nil
+        end
+      end
+      
+      context 'only an incorrectly named RDS database' do
+        it 'returns nil' do
+          expect(app).to receive(:info).and_return(correct_app.merge({
+            data_sources: [ incorrect_data_source ]
+          }))
+          expect(app.data_source).to be_nil
+        end
+      end
+      
+      context 'a correctly named RDS database' do
+        it 'returns the correct database info' do
+          expect(app).to receive(:info).and_return(correct_app.merge({
+            data_sources: [ incorrect_data_source, correct_data_source ]
+          }))
+          expect(app.data_source).to match correct_data_source
+        end
       end
     end
+    
   end
     
 end
