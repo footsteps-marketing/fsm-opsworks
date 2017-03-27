@@ -18,6 +18,12 @@ module FSM
         end
       end
       
+      # Rub a block of code when the app is being deployed
+      def self.on_deploy
+        app = self.info
+        yield app if app
+      end
+      
     end
   end
 end

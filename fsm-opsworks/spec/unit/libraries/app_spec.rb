@@ -76,7 +76,31 @@ describe FSM::WordPress::App do
         end
       end
     end
-    
   end
+  
+  describe '.on_deploy' do
+    context 'when the app exists and is being deployed' do
+      it 'yields to the block with the correct app info' do
+        expect(app).to receive(:info).and_return(correct_app)
+        expect { |b| app.on_deploy(&b) }.to yield_with_args(correct_app)
+      end
+      
+      it 'returns the yielded value' do
+        expect(app).to receive(:info).and_return correct_app
+        expect(app.on_deploy { |v| v }).to be correct_app
+      end
+    end
     
+    context 'when the app is not available or not being deployed' do
+      it 'does not yield' do
+        expect(app).to receive(:info).and_return(nil)
+        expect { |b| app.on_deploy(&b) }.not_to yield_control
+      end
+      
+      it 'returns nil' do
+        expect(app).to receive(:info).and_return(nil)
+        expect(app.on_deploy { |v| v }).to be_nil
+      end
+    end
+  end
 end
