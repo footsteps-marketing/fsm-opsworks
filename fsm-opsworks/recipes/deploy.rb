@@ -167,6 +167,39 @@ search("aws_opsworks_app").each do |app|
                 /etc/php/7.0/fpm/php.ini
             EOH
     end
+    
+    
+    # Create SSL cert directories
+    directory "/etc/ssl-manager" do
+        owner "ssl-manager"
+        group "root"
+        mode '0755'
+        recursive true
+        action :create
+    end
+    
+    directory "/etc/ssl-manager/certs" do
+        owner "ssl-manager"
+        group "root"
+        mode '0755'
+        recursive true
+        action :create
+    end
+    
+    directory "/etc/ssl-manager/private" do
+        owner "ssl-manager"
+        group "root"
+        mode '0700'
+        recursive true
+        action :create
+    end
+    
+    
+    # Create dhparam certificate
+    execute "openssl_dhparam" do
+        command 'openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048'
+        creates '/etc/ssl/certs/dhparam.pem'
+    end
 
 
     # Write out the php-fpm pool conf
@@ -227,7 +260,7 @@ search("aws_opsworks_app").each do |app|
             action :nothing
             subscribes :create, 'package[nginx]', :immediately
         end
-        source "etc/nginx/sites-available/SITE.conf.erb"
+        source "etc/nginx/sites-available/default.conf.erb"
         mode 0644
         owner "root"
         group "root"
@@ -235,8 +268,30 @@ search("aws_opsworks_app").each do |app|
         variables(
             :server_root => server_root,
             :logbase => '/var/log/nginx',
-            :app => (app rescue nil),
-            :ssl => node[:letsencrypt][:get_certificates]
+            :app => (app rescue nil)
+        )
+    end
+
+    
+    # 
+    # Write out template nginx conf file for SSL domain conf creation
+    # 
+    template "/etc/nginx/sites-available/template.conf" do
+        if command['type'] == 'deploy'
+            action :create
+        else
+            action :nothing
+            subscribes :create, 'package[nginx]', :immediately
+        end
+        source "etc/nginx/sites-available/template.conf.erb"
+        mode 0644
+        owner "root"
+        group "root"
+
+        variables(
+            :server_root => server_root,
+            :logbase => '/var/log/nginx',
+            :app => (app rescue nil)
         )
     end
     
@@ -281,41 +336,7 @@ search("aws_opsworks_app").each do |app|
         action :nothing
         subscribes :create, 'directory[create_sites_enabled]', :immediately
         to "/etc/nginx/sites-available/#{app['shortname']}.conf"
-        if node[:letsencrypt][:get_certificates] == false
-            notifies :restart, "service[nginx]", :delayed
-            notifies :restart, "service[php7.0-fpm]", :delayed
-        end
     end
-
-    #
-    # Now write out the domain confs...
-    # 
-#     Domains.get(deploy_root, node[:wordpress][:multisite][:domain_current_site]) do |domains|
-#         domains.each do |domain|
-#             Chef::log.info("***** Mapping Domain: #{domain}")
-#             template "/etc/nginx/sites-available/#{domain}.conf" do
-#                 source "etc/nginx/sites-available/SITE.conf.erb"
-#                 mode 0644
-#                 owner "root"
-#                 group "root"
-# 
-#                 variables(
-#                     :server_root => server_root,
-#                     :logbase => '/var/log/nginx',
-#                     :app => (app rescue nil),
-#                     :url => (domain rescue nil),
-#                     :ssl => node[:letsencrypt][:get_certificates]
-#                 )
-#             end
-# 
-#             link "/etc/nginx/sites-enabled/#{domain}.conf" do
-#                 to "/etc/nginx/sites-available/#{domain}.conf"
-#                 if node[:letsencrypt][:get_certificates] == false
-#                     notifies :restart, "service[nginx]", :delayed
-#                 end
-#             end
-#         end
-#     end
 
 
     # Get or generate salts
@@ -432,10 +453,10 @@ search("aws_opsworks_app").each do |app|
 
     # Restart nginx for good measure
     service "nginx" do
-        action :nothing
+        action :restart
     end
 
     service "php7.0-fpm" do
-        action :nothing        
+        action :restart        
     end
 end
