@@ -453,10 +453,10 @@ search("aws_opsworks_app").each do |app|
 
     # Restart nginx for good measure
     service "nginx" do
-        action :restart
+        action :nothing
     end
 
     service "php7.0-fpm" do
-        action :restart        
+        action :nothing
     end
 end
