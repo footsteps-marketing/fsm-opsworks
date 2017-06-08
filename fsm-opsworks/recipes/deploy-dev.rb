@@ -18,6 +18,7 @@ search("aws_opsworks_app").each do |app|
     template "/etc/php/7.0/fpm/pool.d/www.conf" do
         action :nothing
         subscribes :create, 'package[php-fpm]', :immediately
+        notifies :restart, 'service[php7.0-fpm]', :delayed
         source "etc/php/7.0/fpm/pool.d/www.conf"
         mode 0644
         owner "root"
@@ -46,7 +47,7 @@ search("aws_opsworks_app").each do |app|
     template "/etc/nginx/sites-available/#{app['shortname']}.conf" do
         action :nothing
         subscribes :create, 'package[nginx]', :immediately
-        source "etc/nginx/sites-available/SITE.conf.erb"
+        source "etc/nginx/sites-available/default.conf.erb"
         mode 0644
         owner "root"
         group "root"
@@ -64,6 +65,15 @@ search("aws_opsworks_app").each do |app|
         action :delete
         notifies :restart, 'service[nginx]', :immediately
         only_if "test -L '/etc/nginx/sites-enabled/default'"
+    end
+
+    template "/etc/nginx/nginx.conf" do
+        source "etc/nginx/nginx.conf.erb"
+        mode 0644
+        owner "root"
+        group "root"
+        subscribes :create, 'package[nginx]', :immediately
+        notifies :restart, 'service[nginx]', :delayed
     end
 
     # Link the new confs...

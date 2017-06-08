@@ -49,3 +49,8 @@ end
 service "nginx" do
     action :nothing
 end
+
+service "php7.0-fpm" do
+    action :nothing
+    subscribes :restart, 'bash[run_wp_cli]', :delayed
+end
