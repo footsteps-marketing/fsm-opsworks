@@ -309,18 +309,6 @@ search("aws_opsworks_app").each do |app|
       group "root"
     end
 
-    # Wipe out old sites-enabled symlinks (really just delete the folder and recreated it)
-    directory 'delete_sites_enabled' do
-        recursive true
-        path '/etc/nginx/sites-enabled'
-        if command['type'] == 'deploy'
-            action :delete
-        else
-            action :nothing
-            subscribes :delete, 'package[nginx]', :immediately
-        end
-    end
-
     # Create the folder for new sites-enabled symlinks
     directory 'create_sites_enabled' do
         action :nothing
@@ -328,7 +316,12 @@ search("aws_opsworks_app").each do |app|
         owner 'root'
         group 'root'
         mode '0755'
-        subscribes :create, 'directory[delete_sites_enabled]', :immediately
+        if command['type'] == 'deploy'
+            action :create
+        else
+            action :nothing
+            subscribes :create, 'package[nginx]', :immediately
+        end
     end
 
     # Create the app's symlink
