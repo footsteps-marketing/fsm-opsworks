@@ -447,9 +447,11 @@ search("aws_opsworks_app").each do |app|
     # Restart nginx for good measure
     service "nginx" do
         action :nothing
+        subscribes :restart, "link[#{server_root}]", :immediately
     end
 
     service "php7.0-fpm" do
         action :nothing
+        subscribes :restart, "link[#{server_root}]", :immediately
     end
 end
