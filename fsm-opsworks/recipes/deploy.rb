@@ -382,6 +382,17 @@ search("aws_opsworks_app").each do |app|
     end
 
 
+    # Write out bwp-minify config
+    template "#{deploy_root}/wordpress/wp-content/plugins/bwp-minify/min/config.php" do
+        action :nothing
+        subscribes :create, "template[#{deploy_root}/wordpress/wp-config.php]", :immediately
+        source "srv/www/APPNAME/RELEASETIME/bwp-minify-config.php.erb"
+        mode 0660
+        owner deploy_user
+        group deploy_group
+    end
+
+
     # Write our lil' domain getter script out
     template "#{deploy_root}/get-mapped-domains.php" do
         action :nothing
