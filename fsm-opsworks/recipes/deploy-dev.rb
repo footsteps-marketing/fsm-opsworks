@@ -40,14 +40,44 @@ search("aws_opsworks_app").each do |app|
         )
     end
 
-    
+
+    #
+    # Copy self-signed development certificate and key
+    #
+    directory "/etc/certs/" do
+        action :nothing
+        subscribes :create, 'package[nginx]', :immediately
+        mode 0755
+        owner "root"
+        group "root"
+    end
+
+    template "/etc/certs/devcert.crt" do
+        action :nothing
+        subscribes :create, 'directory[/etc/certs/]', :immediately
+        source "etc/certs/devcert.crt"
+        mode 0644
+        owner "root"
+        group "root"
+    end
+
+    template "/etc/certs/devcert.key" do
+        action :nothing
+        subscribes :create, 'template[/etc/certs/devcert.crt]', :immediately
+        source "etc/certs/devcert.key"
+        mode 0600
+        owner "root"
+        group "root"
+    end
+
+
     # 
     # Write out nginx.conf stuff for our app
     # 
     template "/etc/nginx/sites-available/#{app['shortname']}.conf" do
         action :nothing
-        subscribes :create, 'package[nginx]', :immediately
-        source "etc/nginx/sites-available/default.conf.erb"
+        subscribes :create, 'template[/etc/certs/devcert.key]', :immediately
+        source "etc/nginx/sites-available/default-dev.conf.erb"
         mode 0644
         owner "root"
         group "root"

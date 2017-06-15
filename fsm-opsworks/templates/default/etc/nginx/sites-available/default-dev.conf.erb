@@ -1,0 +1,22 @@
+server {
+    listen 80 default_server;
+    listen 443 ssl default_server;
+
+    ssl_certificate /etc/certs/devcert.crt;
+    ssl_certificate_key /etc/certs/devcert.key;
+
+    access_log <%= @logbase %>/<%= @app['shortname'] %>.access.log main;
+    error_log <%= @logbase %>/<%= @app['shortname'] %>.error.log warn;
+
+    if ($http_user_agent ~ (Firefox/40.1)) {
+        return 403;
+    }
+
+    root <%= @server_root %>/wordpress;
+    index index.php;
+    include snippets/wordpress.conf;
+
+    location /.well-known/acme-challenge/ {
+        proxy_pass http://acme.footstepsmarketing.com/.well-known/acme-challenge/;
+    }
+}
