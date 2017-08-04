@@ -249,7 +249,22 @@ search("aws_opsworks_app").each do |app|
         group "root"
     end
 
-    
+
+    link "etc/nginx/sites-enabled/default" do
+        if command['type'] == 'deploy'
+            action :delete
+        else
+            action :nothing
+            subscribes :delete, 'package[nginx]', :immediately
+        end
+    end
+
+
+    file "etc/nginx/sites-available/default" do
+        subscribes :delete, 'link[etc/nginx/sites-enabled/default]', :immediately
+    end
+
+
     # 
     # Write out nginx.conf stuff for our app
     # 
