@@ -250,7 +250,7 @@ search("aws_opsworks_app").each do |app|
     end
 
 
-    link "etc/nginx/sites-enabled/default" do
+    link "/etc/nginx/sites-enabled/default" do
         if command['type'] == 'deploy'
             action :delete
         else
@@ -260,8 +260,8 @@ search("aws_opsworks_app").each do |app|
     end
 
 
-    file "etc/nginx/sites-available/default" do
-        subscribes :delete, 'link[etc/nginx/sites-enabled/default]', :immediately
+    file "/etc/nginx/sites-available/default" do
+        subscribes :delete, 'link[/etc/nginx/sites-enabled/default]', :immediately
     end
 
 
