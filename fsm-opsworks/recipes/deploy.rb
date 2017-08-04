@@ -309,26 +309,16 @@ search("aws_opsworks_app").each do |app|
       group "root"
     end
 
-    # Create the folder for new sites-enabled symlinks
-    directory 'create_sites_enabled' do
-        action :nothing
-        path '/etc/nginx/sites-enabled'
-        owner 'root'
-        group 'root'
-        mode '0755'
+    # Create the app's symlink
+    link "/etc/nginx/sites-enabled/#{app['shortname']}.conf" do
+        to "/etc/nginx/sites-available/#{app['shortname']}.conf"
+
         if command['type'] == 'deploy'
             action :create
         else
             action :nothing
-            subscribes :create, 'package[nginx]', :immediately
+            subscribes :create, "template[/etc/nginx/sites-available/#{app['shortname']}.conf", :immediately
         end
-    end
-
-    # Create the app's symlink
-    link "/etc/nginx/sites-enabled/#{app['shortname']}.conf" do
-        action :nothing
-        subscribes :create, 'directory[create_sites_enabled]', :immediately
-        to "/etc/nginx/sites-available/#{app['shortname']}.conf"
     end
 
 
