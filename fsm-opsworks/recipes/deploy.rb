@@ -431,6 +431,18 @@ search("aws_opsworks_app").each do |app|
         end
     end
 
+    unless node[:wordpress][:batcache]
+        file "#{deploy_root}/wordpress/wp-content/advanced-cache.php" do
+            action :nothing
+            subscribes :delete, "template[#{deploy_root}/wordpress/wp-config.php]", :immediately
+        end
+
+        file "#{deploy_root}/wordpress/wp-content/object-cache.php" do
+            action :nothing
+            subscribes :delete, "template[#{deploy_root}/wordpress/wp-config.php]", :immediately
+        end
+    end
+
 
     # Make the minifier happy
     directory "#{deploy_root}/wordpress/wp-content/plugins/bwp-minify/cache" do
