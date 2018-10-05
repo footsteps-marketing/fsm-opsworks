@@ -7,6 +7,7 @@ default['wordpress']['sunrise'] = false
 default['wordpress']['debug'] = false
 default['wordpress']['site_url'] = false
 default['wordpress']['fsm_google_public_api_key'] = false
+default['wordpress']['fsm_google_geocode_api_key'] = false
 default['wordpress']['wpmudev_limit_to_user'] = false
 default['wordpress']['aws_access_key_id'] = false
 default['wordpress']['aws_access_key_secret'] = false
