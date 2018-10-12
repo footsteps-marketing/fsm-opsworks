@@ -78,6 +78,10 @@ define('BLOG_ID_CURRENT_SITE', <%= node[:wordpress][:multisite][:default_site] %
 define('FSM_GOOGLE_PUBLIC_API_KEY', '<%= node['wordpress']['fsm_google_public_api_key'] %>');
 <% end -%>
 
+<% if node['wordpress']['fsm_google_places_api_key']!=false -%>
+define('FSM_GOOGLE_PLACES_API_KEY', '<%= node['wordpress']['fsm_google_places_api_key'] %>');
+<% end -%>
+
 <% if node['wordpress']['fsm_google_geocode_api_key']!=false -%>
 define('FSM_GOOGLE_GEOCODE_API_KEY', '<%= node['wordpress']['fsm_google_geocode_api_key'] %>');
 <% end -%>
