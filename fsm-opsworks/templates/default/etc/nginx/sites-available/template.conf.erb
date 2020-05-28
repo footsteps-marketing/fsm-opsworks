@@ -11,11 +11,11 @@ server {
 }
 
 server {
-    listen 443 ssl;
+    listen 443 ssl proxy_protocol;
     server_name {domain} www.{domain};
     access_log <%= @logbase %>/<%= @app['shortname'] %>.access.log main;
     error_log <%= @logbase %>/<%= @app['shortname'] %>.error.log warn;
-    
+
     ssl_certificate /etc/ssl-manager/certs/{domain}_fullchain.pem;
     ssl_trusted_certificate /etc/ssl-manager/certs/{domain}_chain.pem;
     ssl_certificate_key /etc/ssl-manager/private/{domain}_privkey.pem;
