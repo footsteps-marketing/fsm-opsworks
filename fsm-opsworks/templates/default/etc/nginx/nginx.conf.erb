@@ -35,10 +35,17 @@ http {
         ssl_prefer_server_ciphers on;
 
         ##
+	    # Set Real IP from Protocol Proxy Header - required for Wordfence
+	    ##
+
+        set_real_ip_from 172.0.0.0/8;
+    	real_ip_header proxy_protocol;
+
+        ##
         # Logging Settings
         ##
 
-        log_format   main '$http_x_forwarded_for -> $remote_addr - $remote_user [$time_local]  $status '
+        log_format   main '$proxy_protocol_addr -> $realip_remote_addr - $remote_user [$time_local]  $status '
           '"$request" $body_bytes_sent "$http_referer" '
           '"$http_user_agent"';
 
