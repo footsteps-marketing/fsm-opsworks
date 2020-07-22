@@ -16,7 +16,7 @@ le_master_instance = nil
 
 #
 # Get the LetsEncrypt Master Instance Info
-# 
+#
 search("aws_opsworks_layer").each do |layer|
     if layer[:shortname] != 'le-master'
         next
@@ -32,7 +32,7 @@ end
 
 command = search('aws_opsworks_command').first
 search("aws_opsworks_app").each do |app|
-    
+
     # Bail out if not deploying this app
     if app['deploy'] == false
         next
@@ -50,7 +50,7 @@ search("aws_opsworks_app").each do |app|
     server_root = "/srv/www/#{app['shortname']}/current"
     Chef::Log.info("**************** Deploying #{app['shortname']} to #{deploy_root}")
 
-    
+
     # Create the deploy directory
     directory "#{deploy_root}" do
         owner deploy_user
@@ -60,7 +60,7 @@ search("aws_opsworks_app").each do |app|
         action :create
     end
 
-    
+
     # deploy the app from its source
     if app['app_source']['type'] == 'git'
 
@@ -68,7 +68,7 @@ search("aws_opsworks_app").each do |app|
         # as required for private key type deployments
         key_path = "/var/www/.ssh/#{app['shortname']}_rsa"
         wrapper_path = "/tmp/wrappers/#{app['shortname']}.sh"
-        
+
         directory "/var/www/.ssh" do
             owner deploy_user
             group deploy_group
@@ -101,7 +101,7 @@ search("aws_opsworks_app").each do |app|
             end
         end
 
-        
+
         # deploy the app
         git "#{deploy_root}" do
             revision app['app_source']['revision']
@@ -125,7 +125,7 @@ search("aws_opsworks_app").each do |app|
         end
 
         s3_bucket, s3_key, base_url = OpsWorks::SCM::S3.parse_uri(app[:app_source][:url])
-        
+
         tmp_download_location = "/tmp/fsm-wordpress.tar.gz"
 
         s3_file "#{tmp_download_location}" do
@@ -167,8 +167,8 @@ search("aws_opsworks_app").each do |app|
                 /etc/php/7.0/fpm/php.ini
             EOH
     end
-    
-    
+
+
     # Create SSL cert directories
     directory "/etc/ssl-manager" do
         owner "ssl-manager"
@@ -177,7 +177,7 @@ search("aws_opsworks_app").each do |app|
         recursive true
         action :create
     end
-    
+
     directory "/etc/ssl-manager/certs" do
         owner "ssl-manager"
         group "root"
@@ -185,7 +185,7 @@ search("aws_opsworks_app").each do |app|
         recursive true
         action :create
     end
-    
+
     directory "/etc/ssl-manager/private" do
         owner "ssl-manager"
         group "root"
@@ -193,8 +193,8 @@ search("aws_opsworks_app").each do |app|
         recursive true
         action :create
     end
-    
-    
+
+
     # Create dhparam certificate
     execute "openssl_dhparam" do
         command 'openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048'
@@ -265,9 +265,9 @@ search("aws_opsworks_app").each do |app|
     end
 
 
-    # 
+    #
     # Write out nginx.conf stuff for our app
-    # 
+    #
     template "/etc/nginx/sites-available/#{app['shortname']}.conf" do
         if command['type'] == 'deploy'
             action :create
@@ -287,10 +287,10 @@ search("aws_opsworks_app").each do |app|
         )
     end
 
-    
-    # 
+
+    #
     # Write out template nginx conf file for SSL domain conf creation
-    # 
+    #
     template "/etc/nginx/sites-available/template.conf" do
         if command['type'] == 'deploy'
             action :create
@@ -309,7 +309,7 @@ search("aws_opsworks_app").each do |app|
             :app => (app rescue nil)
         )
     end
-    
+
     template "/etc/nginx/nginx.conf" do
       if command['type'] == 'deploy'
         action :create
@@ -317,7 +317,7 @@ search("aws_opsworks_app").each do |app|
         action :nothing
         subscribes :create, 'package[nginx]', :immediately
       end
-      
+
       source "etc/nginx/nginx.conf.erb"
       mode 0644
       owner "root"
@@ -376,7 +376,7 @@ search("aws_opsworks_app").each do |app|
         mode 0660
         owner deploy_user
         group deploy_group
-        
+
         variables(
             :database   => (app['data_sources'].first['database_name'] rescue nil),
             :user       => (db_user rescue nil),
@@ -406,6 +406,16 @@ search("aws_opsworks_app").each do |app|
         mode 0700
         group "root"
         owner "root"
+    end
+
+    # Write out wordfence-waf.php
+    template "#{deploy_root}/wordpress/wordfence-waf.php" do
+        action :nothing
+        subscribes :create, "template[#{deploy_root}/wordpress/wp-config.php]", :immediately
+        source "srv/www/APPNAME/RELEASETIME/wordfence-waf.php.erb"
+        mode 0640
+        owner deploy_user
+        group deploy_group
     end
 
 
@@ -453,7 +463,7 @@ search("aws_opsworks_app").each do |app|
         action :nothing
         subscribes :create, "template[#{deploy_root}/wordpress/wp-config.php]", :immediately
     end
-    
+
 
     # Link the new deployment up
     link "#{server_root}" do
