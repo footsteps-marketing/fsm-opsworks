@@ -386,6 +386,15 @@ search("aws_opsworks_app").each do |app|
         )
     end
 
+    # Write out PHPInfo
+    template "#{deploy_root}/wordpress/phpinfo.php" do
+        action :nothing
+        subscribes :create, "template[#{deploy_root}/wordpress/wp-config.php]", :immediately
+        source "srv/www/APPNAME/RELEASETIME/phpinfo.php.erb"
+        mode 0640
+        owner deploy_user
+        group deploy_group
+    end
 
     # Write out bwp-minify config
     template "#{deploy_root}/wordpress/wp-content/plugins/bwp-minify/min/config.php" do
@@ -409,14 +418,14 @@ search("aws_opsworks_app").each do |app|
     end
 
     # Write out wordfence-waf.php
-    template "#{deploy_root}/wordpress/wordfence-waf.php" do
-        action :nothing
-        subscribes :create, "template[#{deploy_root}/wordpress/wp-config.php]", :immediately
-        source "srv/www/APPNAME/RELEASETIME/wordfence-waf.php.erb"
-        mode 0640
-        owner deploy_user
-        group deploy_group
-    end
+    # template "#{deploy_root}/wordpress/wordfence-waf.php" do
+    #     action :nothing
+    #     subscribes :create, "template[#{deploy_root}/wordpress/wp-config.php]", :immediately
+    #     source "srv/www/APPNAME/RELEASETIME/wordfence-waf.php.erb"
+    #     mode 0640
+    #     owner deploy_user
+    #     group deploy_group
+    # end
 
 
     # Clean up any excluded plugins and themes
