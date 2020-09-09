@@ -426,6 +426,16 @@ search("aws_opsworks_app").each do |app|
         group deploy_group
     end
 
+    # Write out .user.ini
+    template "#{deploy_root}/wordpress/.user.ini" do
+        action :nothing
+        subscribes :create, "template[#{deploy_root}/wordpress/wp-config.php]", :immediately
+        source "srv/www/APPNAME/RELEASETIME/user.ini.erb"
+        mode 0640
+        owner deploy_user
+        group deploy_group
+    end
+
 
     # Clean up any excluded plugins and themes
     exclude_plugins = node['wordpress']['exclude_plugins']
